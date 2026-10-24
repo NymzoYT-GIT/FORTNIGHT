@@ -550,3 +550,183 @@ button:focus-visible {
     margin-top: 12px;
   }
 }
+
+/* FORTNIGHT SETTINGS MENU */
+
+.fn-settings-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(4, 9, 19, 0.86);
+  color: #fff;
+  font-family: Arial, sans-serif;
+}
+
+.fn-settings-panel {
+  display: flex;
+  flex-direction: column;
+  width: min(900px, 100%);
+  max-height: 90vh;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 12px;
+  background: #121b2a;
+  box-shadow: 0 20px 70px rgba(0,0,0,.55);
+}
+
+.fn-settings-header,
+.fn-settings-footer,
+.fn-settings-tabs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+}
+
+.fn-settings-header {
+  justify-content: space-between;
+}
+
+.fn-settings-header h2 {
+  margin: 0;
+  font-size: 21px;
+  letter-spacing: 2px;
+}
+
+.fn-settings-close {
+  padding: 7px 12px;
+  border: 0;
+  border-radius: 5px;
+  background: #27354a;
+  color: white;
+  cursor: pointer;
+}
+
+.fn-settings-tabs {
+  flex-wrap: wrap;
+}
+
+.fn-settings-tab,
+.fn-settings-button {
+  padding: 9px 13px;
+  border: 1px solid #42536c;
+  border-radius: 5px;
+  background: #243248;
+  color: white;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.fn-settings-tab.active,
+.fn-settings-button.primary {
+  border-color: #ffc857;
+  background: #ffc857;
+  color: #171717;
+}
+
+.fn-settings-content {
+  padding: 18px;
+  overflow-y: auto;
+  min-height: 180px;
+}
+
+.fn-settings-description {
+  color: #b9c6d9;
+  line-height: 1.5;
+}
+
+.fn-keybind-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.fn-keybind-row,
+.fn-setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 6px;
+  background: rgba(255,255,255,.035);
+}
+
+.fn-keybind-name {
+  font-size: 13px;
+}
+
+.fn-keybind-value {
+  margin-left: auto;
+  color: #ffd36b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.fn-settings-button.small {
+  padding: 7px 9px;
+  font-size: 11px;
+}
+
+.fn-settings-footer {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  border-top: 1px solid rgba(255,255,255,.12);
+  border-bottom: 0;
+}
+
+.fn-settings-status {
+  margin-right: auto;
+  color: #b9c6d9;
+  font-size: 12px;
+}
+
+.fn-setting-row {
+  margin: 8px 0;
+}
+
+.fn-setting-row input[type="range"] {
+  width: min(260px, 40%);
+}
+
+.fn-setting-value {
+  min-width: 45px;
+  color: #ffd36b;
+  text-align: right;
+}
+
+.fn-settings-select {
+  padding: 7px;
+  border-radius: 4px;
+  background: #243248;
+  color: white;
+}
+
+.fn-settings-message {
+  margin-top: 12px;
+  color: #ffd36b;
+}
+
+@media (max-width: 650px) {
+  .fn-keybind-list {
+    grid-template-columns: 1fr;
+  }
+
+  .fn-settings-header h2 {
+    font-size: 17px;
+  }
+
+  .fn-settings-footer {
+    justify-content: stretch;
+  }
+
+  .fn-settings-footer > * {
+    flex: 1;
+  }
+}
