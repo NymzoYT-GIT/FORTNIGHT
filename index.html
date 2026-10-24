@@ -3,463 +3,480 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FORTNIGHT | 3D Island</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FORTNIGHT — Battle Royale</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#07111f;color:#fff;font-family:Arial,sans-serif}
-button,select{cursor:pointer;font-weight:bold;border:1px solid #ffffff35;border-radius:8px;padding:11px 14px;background:#21344c;color:white}
-button:hover{filter:brightness(1.2)}
-button:disabled{opacity:.45;cursor:default}
-header{height:64px;display:flex;align-items:center;gap:14px;padding:0 16px;background:#081321;border-bottom:2px solid #30455c;position:relative;z-index:3}
-.logo{font-size:24px;font-weight:1000;font-style:italic;letter-spacing:2px;color:#42d2ff}
-.money{margin-left:auto;color:#72ffb1;font-weight:bold}
-nav{display:flex;gap:7px;overflow-x:auto;padding:10px;background:#0b1828;position:relative;z-index:3}
-nav button{white-space:nowrap}
-nav button.active{background:#42d2ff;color:#061522}
-main{max-width:1250px;margin:auto;padding:16px}
-.page{display:none}.page.active{display:block}
-.hero{padding:26px;border-radius:15px;background:linear-gradient(120deg,#12678d,#202d66,#643b8b);margin-bottom:18px}
-.hero h1{font-size:clamp(38px,7vw,68px);font-style:italic;line-height:.95;margin:8px 0}
-.hero p{line-height:1.5;color:#e2f5ff}
-.primary{background:#42d2ff;color:#061522;border:0;font-size:16px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px;margin:16px 0}
-.card,.panel{background:#101e31;border:1px solid #ffffff20;border-radius:12px;padding:15px}
-.art{height:95px;display:grid;place-items:center;border-radius:9px;background:linear-gradient(140deg,#245979,#6745a1);font-size:48px}
-.muted{color:#b6c8dc;line-height:1.5}
-#gameWrap{position:relative;border:2px solid #486783;border-radius:12px;overflow:hidden;background:#83c9e8}
-#game{display:block;width:100%;height:min(63vh,570px);min-height:300px;touch-action:none}
-#hud{position:absolute;inset:10px 10px auto;pointer-events:none;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;text-shadow:1px 2px 3px #000}
-.hudbox{background:#071522c9;padding:8px 10px;border-radius:7px;font-size:13px}
-#message{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:#071522dc;padding:10px 14px;border-radius:8px;text-align:center;max-width:90%;pointer-events:none}
-.gameButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.layout{display:grid;grid-template-columns:minmax(0,2fr) minmax(210px,1fr);gap:15px}
-.setting{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #ffffff20}
-.key{min-width:68px}
-footer{text-align:center;padding:25px;color:#8198b1}
-@media(max-width:700px){main{padding:10px}.layout{grid-template-columns:1fr}.hero{padding:19px}header{padding:0 9px}.logo{font-size:20px}#game{height:55vh}}
+body{margin:0;overflow:hidden;background:#82c9f4;font-family:Arial,sans-serif;color:white}
+canvas{display:block}
+#hud{position:fixed;inset:0;pointer-events:none}
+.panel{background:#101b25cc;padding:12px;border:1px solid #ffffff45;border-radius:9px}
+#stats{position:absolute;left:15px;bottom:18px;width:220px}
+#mapinfo{position:absolute;top:15px;right:15px;text-align:right}
+#crosshair{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:23px}
+#message{position:absolute;top:20%;left:50%;transform:translateX(-50%);font-weight:bold;text-shadow:0 2px 5px black}
+#help{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);text-align:center;background:#101b25cc;padding:10px;border-radius:8px;font-size:12px}
+.bar{height:12px;background:#263746;margin-top:5px;border-radius:6px;overflow:hidden}
+.fill{height:100%;width:100%;transition:width .15s}
+#health{background:#35e26c}
+#shield{background:#24a8ff}
+#start{position:fixed;inset:0;background:#091626dd;display:flex;align-items:center;justify-content:center;text-align:center;z-index:4}
+#startbox{max-width:520px;padding:25px}
+h1{font-size:clamp(42px,9vw,76px);margin:0;color:#ffdb42;font-style:italic;text-shadow:4px 4px #d65c26}
+button{background:#ffcc35;border:0;padding:15px 35px;font-weight:bold;font-size:18px;cursor:pointer;border-radius:8px}
+button:hover{background:#ffe783}
+#end{display:none;position:fixed;inset:0;background:#06101add;z-index:5;align-items:center;justify-content:center;text-align:center}
 </style>
 </head>
 <body>
-<header>
- <div class="logo">FORTNIGHT</div>
- <div class="money">🟢 <span id="bucks">0</span> V-Bucks</div>
-</header>
-<nav>
- <button class="active" data-page="play">▶ PLAY</button>
- <button data-page="locker">♟ LOCKER</button>
- <button data-page="pass">★ BATTLE PASS</button>
- <button data-page="shop">✦ ITEM SHOP</button>
- <button data-page="settings">⚙ SETTINGS</button>
-</nav>
-<main>
-<section id="play" class="page active">
- <div class="hero">
-  <p>WELCOME TO YOUR ISLAND</p>
-  <h1>DROP IN.<br>BUILD UP.</h1>
-  <p>Explore a 3D island, collect glowing shards, and construct your own defenses.</p>
-  <button class="primary" id="enter">ENTER THE ISLAND →</button>
+<div id="start">
+ <div id="startbox">
+  <h1>FORTNIGHT</h1>
+  <h2>3D BATTLE ROYALE</h2>
+  <p>Drop into the island. Find weapons. Survive the storm.</p>
+  <p>WASD: Move · Mouse: Look · Click: Shoot</p>
+  <p>Space: Jump · Shift: Sprint · E: Open chests</p>
+  <button id="play">DROP INTO ISLAND</button>
+  <p style="font-size:12px">Best played on a computer with a mouse.</p>
  </div>
- <div class="layout">
-  <div>
-   <div id="gameWrap">
-    <div id="game"></div>
-    <div id="hud">
-     <div class="hudbox">✦ Shards: <b id="shards">0</b><br>★ XP: <b id="xp">0</b></div>
-     <div class="hudbox">▰ Materials: <b id="materials">20</b><br>⌂ Builds: <b id="builds">0</b></div>
-    </div>
-    <div id="message">Click ENTER THE ISLAND, then move with WASD.</div>
-   </div>
-   <div class="gameButtons">
-    <button id="buildToggle">BUILD: OFF (B)</button>
-    <button id="cycle">PIECE: WALL (Q)</button>
-    <button id="removeBuild">REMOVE LAST BUILD</button>
-    <button id="restart">RESET ISLAND</button>
-   </div>
-   <p class="muted">WASD: move · Mouse: look around · B: building mode · Q: change piece · Click: place build. Collect the floating blue shards.</p>
-  </div>
-  <aside>
-   <div class="panel">
-    <h3>ISLAND STATUS</h3>
-    <p>V-Bucks: <b id="bucks2">0</b></p>
-    <p>Level: <b id="level">1</b></p>
-    <p>Outfit: <b id="equipped">Trailblazer</b></p>
-    <p class="muted">Every 5 shards earns 10 V-Bucks and bonus XP.</p>
-   </div>
-   <div class="panel">
-    <h3>HOW TO PLAY</h3>
-    <p class="muted">1. Enter the island.</p>
-    <p class="muted">2. Move around and collect blue shards.</p>
-    <p class="muted">3. Press B to enable building.</p>
-    <p class="muted">4. Press Q to switch between walls, floors, ramps, and roofs.</p>
-    <p class="muted">5. Click the ground to place a structure.</p>
-   </div>
-  </aside>
+</div>
+<div id="hud">
+ <div id="stats" class="panel">
+  <b>PLAYER</b>
+  <div>HEALTH <span id="hpnum">100</span></div>
+  <div class="bar"><div id="health" class="fill"></div></div>
+  <div>SHIELD <span id="shnum">50</span></div>
+  <div class="bar"><div id="shield" class="fill"></div></div>
+  <p id="weapon">RIFLE · 30 / 90</p>
+  <p id="kills">ELIMINATIONS: 0</p>
  </div>
-</section>
-<section id="locker" class="page">
- <div class="hero"><h1>YOUR LOCKER</h1><p>Choose an outfit for your next island run.</p></div>
- <div id="lockerGrid" class="grid"></div>
-</section>
-<section id="pass" class="page">
- <div class="hero"><h1>BATTLE PASS</h1><p>Earn XP by exploring and collecting shards.</p><p>LEVEL <b id="passLevel">1</b> · <b id="passXP">0</b> XP</p></div>
- <div id="passGrid" class="grid"></div>
-</section>
-<section id="shop" class="page">
- <div class="hero"><h1>ITEM SHOP</h1><p>Spend your earned V-Bucks on original cosmetics.</p></div>
- <div id="shopGrid" class="grid"></div>
-</section>
-<section id="settings" class="page">
- <div class="hero"><h1>SETTINGS</h1><p>Customize your controls and gameplay.</p></div>
- <div class="panel">
-  <h2>KEYBINDS</h2>
-  <p class="muted">Click a key button, then press the key you want to use.</p>
-  <div id="keyList"></div>
-  <button id="resetKeys">RESTORE DEFAULT KEYS</button>
+ <div id="mapinfo" class="panel">
+  <b>ISLAND SURVIVAL</b>
+  <div id="storm">STORM: 180s</div>
+  <div id="alive">PLAYERS LEFT: 11</div>
+  <div id="coords">X: 0 Z: 0</div>
  </div>
- <div class="panel" style="margin-top:15px">
-  <h2>GAME SETTINGS</h2>
-  <div class="setting"><label for="sensitivity">Camera sensitivity</label><input id="sensitivity" type="range" min="1" max="10" value="5"></div>
-  <div class="setting"><label for="quality">Graphics quality</label><select id="quality"><option>Performance</option><option selected>Balanced</option><option>High</option></select></div>
-  <button id="saveSettings">SAVE SETTINGS</button><p id="saved" class="muted"></p>
-  <hr style="border-color:#ffffff20;margin:20px 0">
-  <button id="resetProgress">RESET SAVED PROGRESS</button>
- </div>
-</section>
-</main>
-<footer>FORTNIGHT · 3D BROWSER PROTOTYPE · GITHUB PAGES</footer>
+ <div id="crosshair">+</div>
+ <div id="message"></div>
+ <div id="help">WASD MOVE · SPACE JUMP · SHIFT SPRINT · E LOOT<br>LEFT CLICK SHOOT · RIGHT CLICK AIM · ESC RELEASE MOUSE</div>
+</div>
+<div id="end"><div><h1 id="endtitle">ELIMINATED</h1><p id="endtext"></p><button onclick="location.reload()">PLAY AGAIN</button></div></div>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-<script>
-"use strict";
-const $=id=>document.getElementById(id);
-const defaults={forward:"w",back:"s",left:"a",right:"d",build:"b",cycle:"q"};
-const labels={forward:"Move forward",back:"Move backward",left:"Move left",right:"Move right",build:"Toggle building",cycle:"Change building piece"};
-function load(k,f){try{let x=localStorage.getItem("fn3_"+k);return x===null?f:JSON.parse(x)}catch(e){return f}}
-function save(k,v){try{localStorage.setItem("fn3_"+k,JSON.stringify(v))}catch(e){}}
-let data=load("data",{bucks:0,xp:0,shards:0,materials:20,outfit:"Trailblazer",owned:["Trailblazer"],items:[]});
-data.owned=Array.isArray(data.owned)?data.owned:["Trailblazer"];
-data.items=Array.isArray(data.items)?data.items:[];
-let keys={...defaults,...load("keys",{})};
-let settings={sensitivity:5,quality:"Balanced",...load("settings",{})};
-let claimed=load("claimed",[]);
-let scene,camera,renderer,player,playerBody,clock;
-let terrain,worldReady=false,buildMode=false,pieceIndex=0;
-let shards=[],buildObjects=[],obstacles=[];
-let yaw=0,pitch=.25,keysDown=new Set(),entered=false;
-const pieceNames=["WALL","FLOOR","RAMP","ROOF"];
-const outfits=[
- {name:"Trailblazer",icon:"🧑‍🚀",cost:0,desc:"Your original island explorer."},
- {name:"Sky Runner",icon:"🏃",cost:80,desc:"Ready to race across the island."},
- {name:"Neon Scout",icon:"🦸",cost:140,desc:"A bright futuristic outfit."},
- {name:"Frost Wanderer",icon:"🥶",cost:200,desc:"An icy explorer style."}
-];
-const cosmetics=[
- {name:"Star Pick",icon:"⭐",cost:40,desc:"A starry tool cosmetic."},
- {name:"Cloud Glider",icon:"☁️",cost:80,desc:"A fluffy glider cosmetic."},
- {name:"Pixel Dance",icon:"🕺",cost:60,desc:"A victory dance cosmetic."},
- {name:"Aurora Trail",icon:"🌌",cost:100,desc:"A colorful trail cosmetic."}
-];
-const rewards=[
- {xp:0,icon:"🪙",name:"Welcome Bonus",desc:"A little V-Bucks starter reward."},
- {xp:100,icon:"✨",name:"Spark Badge",desc:"A badge for your profile."},
- {xp:200,icon:"🌠",name:"Star Trail",desc:"A cosmic cosmetic reward."},
- {xp:300,icon:"🪂",name:"Cloud Drop",desc:"A new glider style."},
- {xp:500,icon:"🏆",name:"Island Champion",desc:"A milestone reward."}
-];
-function persist(){save("data",data);save("claimed",claimed);updateUI()}
-function updateUI(){
- $("bucks").textContent=data.bucks;$("bucks2").textContent=data.bucks;
- $("xp").textContent=data.xp;$("shards").textContent=data.shards;
- $("materials").textContent=data.materials;$("builds").textContent=buildObjects.length;
- $("level").textContent=Math.floor(data.xp/100)+1;
- $("passLevel").textContent=Math.floor(data.xp/100)+1;
- $("passXP").textContent=data.xp;$("equipped").textContent=data.outfit;
-}
-function showPage(id){
- document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===id));
- document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
- if(id==="play"&&renderer)resize();
-}
-document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
-function makeCard(icon,name,desc,price,label,fn){
- const c=document.createElement("div");c.className="card";
- const art=document.createElement("div");art.className="art";art.textContent=icon;c.appendChild(art);
- const h=document.createElement("h3");h.textContent=name;c.appendChild(h);
- const p=document.createElement("p");p.className="muted";p.textContent=desc;c.appendChild(p);
- const cost=document.createElement("p");cost.textContent=price;c.appendChild(cost);
- const b=document.createElement("button");b.textContent=label;b.onclick=fn;c.appendChild(b);
- return c;
-}
-function renderLocker(){
- const root=$("lockerGrid");root.replaceChildren();
- outfits.forEach(o=>{
- const own=data.owned.includes(o.name);
- root.appendChild(makeCard(o.icon,o.name,o.desc,own?(data.outfit===o.name?"EQUIPPED":"OWNED"):o.cost+" V-Bucks",
- own?(data.outfit===o.name?"EQUIPPED":"EQUIP"):"BUY",()=>{
- if(own){data.outfit=o.name;persist();renderAll();return}
- if(data.bucks<o.cost){alert("Not enough V-Bucks. Collect more shards on the island!");return}
- data.bucks-=o.cost;data.owned.push(o.name);data.outfit=o.name;persist();renderAll();
- }));
- });
-}
-function renderShop(){
- const root=$("shopGrid");root.replaceChildren();
- cosmetics.forEach(o=>{
- const own=data.items.includes(o.name);
- root.appendChild(makeCard(o.icon,o.name,o.desc,own?"OWNED":o.cost+" V-Bucks",own?"OWNED":"PURCHASE",()=>{
- if(own)return;
- if(data.bucks<o.cost){alert("Not enough V-Bucks. Collect more shards on the island!");return}
- data.bucks-=o.cost;data.items.push(o.name);persist();renderAll();
- }));
- });
-}
-function renderPass(){
- const root=$("passGrid");root.replaceChildren();
- rewards.forEach((r,i)=>{
- const unlocked=data.xp>=r.xp,done=claimed.includes(i);
- root.appendChild(makeCard(r.icon,r.name,r.desc,"Unlock at "+r.xp+" XP",done?"CLAIMED":unlocked?"CLAIM REWARD":"LOCKED",()=>{
- if(!unlocked||done)return;
- claimed.push(i);if(i===0)data.bucks+=10;
- persist();renderPass();
- }));
- const b=root.lastChild.querySelector("button");b.disabled=!unlocked||done;
- });
-}
-function renderKeys(){
- const root=$("keyList");root.replaceChildren();
- Object.keys(defaults).forEach(k=>{
- const row=document.createElement("div");row.className="setting";
- const name=document.createElement("span");name.textContent=labels[k];row.appendChild(name);
- const b=document.createElement("button");b.className="key";b.textContent=keys[k].toUpperCase();
- b.onclick=()=>{
- b.textContent="PRESS KEY";
- const fn=e=>{
- e.preventDefault();const v=e.key.toLowerCase();
- if(v.length!==1||Object.entries(keys).some(([other,val])=>other!==k&&val===v)){b.textContent="TRY AGAIN";return}
- keys[k]=v;save("keys",keys);renderKeys();window.removeEventListener("keydown",fn,true);
- };
- window.addEventListener("keydown",fn,true);
- };
- row.appendChild(b);root.appendChild(row);
- });
-}
-function renderAll(){renderLocker();renderShop();renderPass();renderKeys();updateUI()}
-$("resetKeys").onclick=()=>{keys={...defaults};save("keys",keys);renderKeys()};
-$("sensitivity").value=settings.sensitivity;
-$("quality").value=settings.quality;
-$("saveSettings").onclick=()=>{
- settings={sensitivity:Number($("sensitivity").value),quality:$("quality").value};
- save("settings",settings);$("saved").textContent="Settings saved!";
-};
-$("resetProgress").onclick=()=>{
- if(!confirm("Reset your saved V-Bucks, XP, unlocks and progress?"))return;
- data={bucks:0,xp:0,shards:0,materials:20,outfit:"Trailblazer",owned:["Trailblazer"],items:[]};
- claimed=[];persist();renderAll();
-};
-function message(t){$("message").textContent=t}
-function toggleBuild(){buildMode=!buildMode;$("buildToggle").textContent="BUILD: "+(buildMode?"ON":"OFF")+" (B)";message(buildMode?"Building mode: click the ground to place a piece.":"Exploration mode.");}
-function cyclePiece(){pieceIndex=(pieceIndex+1)%pieceNames.length;$("cycle").textContent="PIECE: "+pieceNames[pieceIndex]+" (Q)";message("Selected "+pieceNames[pieceIndex].toLowerCase()+".")}
-$("buildToggle").onclick=toggleBuild;
-$("cycle").onclick=cyclePiece;
-$("enter").onclick=()=>{entered=true;message("Island ready! WASD to move. Drag the mouse to look around.");showPage("play");};
-$("restart").onclick=()=>{
- if(!worldReady)return;
- shards.forEach(s=>scene.remove(s));shards=[];
- buildObjects.forEach(s=>scene.remove(s));buildObjects=[];
- player.position.set(0,1,0);data.materials=20;data.shards=0;data.xp=0;data.bucks=0;persist();
- for(let i=0;i<18;i++)spawnShard();message("Island reset.");updateUI();
-};
-$("removeBuild").onclick=()=>{
- const b=buildObjects.pop();if(b){scene.remove(b);data.materials+=1;persist();message("Removed your last build.");}
-};
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
 
-// Three.js world
-function init3D(){
- if(!window.THREE){message("3D library failed to load. Check your internet connection and refresh.");return}
- const T=window.THREE;
- scene=new T.Scene();scene.background=new T.Color(0x8bd4f2);scene.fog=new T.Fog(0x8bd4f2,45,125);
- camera=new T.PerspectiveCamera(65,1,.1,300);
- renderer=new T.WebGLRenderer({antialias:true});
- renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,settings.quality==="High"?1.7:1.15));
- renderer.shadowMap.enabled=settings.quality!=="Performance";
- renderer.shadowMap.type=T.PCFSoftShadowMap;
- $("game").appendChild(renderer.domElement);
- clock=new T.Clock();
- scene.add(new T.HemisphereLight(0xc6edff,0x476343,2));
- const sun=new T.DirectionalLight(0xfff2d1,2.2);sun.position.set(-25,45,20);
- sun.castShadow=renderer.shadowMap.enabled;sun.shadow.mapSize.set(1024,1024);scene.add(sun);
- const water=new T.Mesh(new T.PlaneGeometry(300,300),new T.MeshStandardMaterial({color:0x258cb6,roughness:.7}));
- water.rotation.x=-Math.PI/2;water.position.y=-1.2;scene.add(water);
- terrain=new T.Mesh(new T.CylinderGeometry(48,52,3,64),new T.MeshStandardMaterial({color:0x64ba69,roughness:1}));
- terrain.position.y=-1.5;terrain.receiveShadow=true;scene.add(terrain);
- // Island surface
- const ground=new T.Mesh(new T.CircleGeometry(48,64),new T.MeshStandardMaterial({color:0x80d16f,roughness:1}));
- ground.rotation.x=-Math.PI/2;ground.position.y=.02;ground.receiveShadow=true;scene.add(ground);
- // Paths across the island
- for(let i=0;i<4;i++){
- const path=new T.Mesh(new T.BoxGeometry(22,.08,3.5),new T.MeshStandardMaterial({color:0xcab98c}));
- path.position.set((i-1.5)*10,.07,(i%2===0)?-8:8);path.rotation.y=.4;scene.add(path);
- }
- // Trees, rocks and simple buildings
- for(let i=0;i<75;i++){
- const a=Math.random()*Math.PI*2,r=12+Math.random()*32,x=Math.cos(a)*r,z=Math.sin(a)*r;
- if(Math.hypot(x,z)<8)continue;
- const tree=new T.Group();
- const trunk=new T.Mesh(new T.CylinderGeometry(.22,.32,2,7),new T.MeshStandardMaterial({color:0x785035}));
- trunk.position.y=1;trunk.castShadow=true;tree.add(trunk);
- const crown=new T.Mesh(new T.ConeGeometry(1.35,3.1,7),new T.MeshStandardMaterial({color:[0x267b49,0x318c4b,0x3c9851][i%3]}));
- crown.position.y=3; crown.castShadow=true;tree.add(crown);tree.position.set(x,0,z);scene.add(tree);
- obstacles.push({x,z,r:1});
- }
- for(let i=0;i<5;i++){
- const building=new T.Group();
- const base=new T.Mesh(new T.BoxGeometry(4,3,4),new T.MeshStandardMaterial({color:[0x64849d,0xc3a675,0x8e81bd][i%3]}));
- base.position.y=1.5;base.castShadow=true;base.receiveShadow=true;building.add(base);
- const roof=new T.Mesh(new T.ConeGeometry(3.2,1.5,4),new T.MeshStandardMaterial({color:0x394e6a}));
- roof.position.y=3.7;roof.rotation.y=Math.PI/4;building.add(roof);
- const x=Math.cos(i*1.25)*24,z=Math.sin(i*1.25)*24;
- building.position.set(x,0,z);scene.add(building);obstacles.push({x,z,r:3.2});
- }
- // Player model
- player=new T.Group();
- const body=new T.Mesh(new T.CapsuleGeometry(.48,.8,4,8),new T.MeshStandardMaterial({color:0x1889c4,roughness:.65}));
- body.position.y=1.25;body.castShadow=true;player.add(body);
- const head=new T.Mesh(new T.SphereGeometry(.36,16,12),new T.MeshStandardMaterial({color:0xffd0a1}));
- head.position.y=2.1;head.castShadow=true;player.add(head);
- const visor=new T.Mesh(new T.BoxGeometry(.45,.14,.12),new T.MeshStandardMaterial({color:0x102b47,metalness:.4,roughness:.25}));
- visor.position.set(0,2.16,.31);player.add(visor);
- const legMat=new T.MeshStandardMaterial({color:0x172e52});
- for(const x of [-.23,.23]){
- const leg=new T.Mesh(new T.BoxGeometry(.22,.65,.27),legMat);leg.position.set(x,.43,0);leg.castShadow=true;player.add(leg);
- }
- scene.add(player);player.position.set(0,0,0);
- for(let i=0;i<18;i++)spawnShard();
- resize();worldReady=true;message("3D island loaded! Press ENTER THE ISLAND to begin.");
- animate();
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x88cdf7);
+scene.fog=new THREE.Fog(0x88cdf7,100,260);
+
+const camera=new THREE.PerspectiveCamera(70,innerWidth/innerHeight,.1,500);
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(innerWidth,innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+
+scene.add(new THREE.HemisphereLight(0xc9e8ff,0x64794c,2));
+const sun=new THREE.DirectionalLight(0xfff2d2,3);
+sun.position.set(70,100,45);sun.castShadow=true;
+sun.shadow.mapSize.set(1024,1024);
+scene.add(sun);
+
+const mat=(color,roughness=0.85)=>new THREE.MeshStandardMaterial({color,roughness});
+const grass=mat(0x65a94a), dirt=mat(0x92734b);
+const wood=mat(0x90603b), roofmat=mat(0x9b4934);
+const blue=mat(0x2877d5), dark=mat(0x202c3a);
+const skin=mat(0xe7b58a), pants=mat(0x35475a);
+const white=mat(0xf3f0df), gold=mat(0xffc93c);
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(440,440),grass);
+ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
+
+// Island hills
+for(let i=0;i<24;i++){
+ const a=i/24*Math.PI*2;
+ const r=135+Math.random()*40;
+ const h=7+Math.random()*18;
+ const hill=new THREE.Mesh(new THREE.ConeGeometry(17+Math.random()*15,h,7),grass);
+ hill.position.set(Math.cos(a)*r,h/2-1,Math.sin(a)*r);
+ hill.scale.z=1.3;hill.castShadow=true;scene.add(hill);
 }
-function spawnShard(){
- if(!worldReady)return;
- const T=THREE;
- const a=Math.random()*Math.PI*2,r=6+Math.random()*36;
- const gem=new T.Mesh(new T.OctahedronGeometry(.55),new T.MeshStandardMaterial({color:0x37eaff,emissive:0x0787c0,emissiveIntensity:1.3,metalness:.3,roughness:.25}));
- gem.position.set(Math.cos(a)*r,.9,Math.sin(a)*r);gem.castShadow=true;scene.add(gem);
- shards.push(gem);
+
+// Roads
+const roadmat=mat(0x555b60);
+function road(x,z,w,d){
+ const m=new THREE.Mesh(new THREE.BoxGeometry(w,.12,d),roadmat);
+ m.position.set(x,.04,z);scene.add(m);
 }
-function placeBuild(){
- if(!buildMode||!worldReady)return;
- if(data.materials<=0){message("Out of materials! Collect shards.");return}
- // Place a piece a short distance in front of the player.
- const T=THREE,dir=new T.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));
- const pos=player.position.clone().addScaledVector(dir,4);
- pos.x=Math.round(pos.x/2)*2;pos.z=Math.round(pos.z/2)*2;
- if(Math.hypot(pos.x,pos.z)>43){message("Build closer to the center of the island.");return}
- let mesh;
- const mat=new T.MeshStandardMaterial({color:0x55bfe3,roughness:.65});
- if(pieceIndex===0){
- mesh=new T.Mesh(new T.BoxGeometry(3.2,2.8,.25),mat);mesh.position.set(pos.x,1.4,pos.z);
- }else if(pieceIndex===1){
- mesh=new T.Mesh(new T.BoxGeometry(3.2,.2,3.2),mat);mesh.position.set(pos.x,.2,pos.z);
- }else if(pieceIndex===2){
- mesh=new T.Mesh(new T.BoxGeometry(3.2,.25,3.2),mat);mesh.position.set(pos.x,.8,pos.z);mesh.rotation.x=-.32;
- }else{
- const geo=new T.ConeGeometry(2.25,.8,4);mesh=new T.Mesh(geo,mat);mesh.position.set(pos.x,2.8,pos.z);mesh.rotation.y=Math.PI/4;
+road(0,.1,14,320);road(0,0,300,12);
+
+// Trees
+const trunkmat=mat(0x765035),leafmat=mat(0x267744),leaf2=mat(0x398b48);
+function tree(x,z,s=1){
+ const g=new THREE.Group();
+ const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.35*s,.5*s,3*s,7),trunkmat);
+ trunk.position.y=1.5*s;trunk.castShadow=true;g.add(trunk);
+ for(let i=0;i<3;i++){
+  const crown=new THREE.Mesh(new THREE.ConeGeometry((2.3-i*.35)*s,3.1*s,7),i===1?leaf2:leafmat);
+  crown.position.y=(3+i*1.5)*s;crown.castShadow=true;g.add(crown);
  }
- mesh.castShadow=true;mesh.receiveShadow=true;scene.add(mesh);buildObjects.push(mesh);
- data.materials--;persist();message(pieceNames[pieceIndex]+" placed!");
+ g.position.set(x,0,z);scene.add(g);
 }
-$("game").addEventListener("pointerdown",e=>{
- if(!worldReady||!entered)return;
- if(buildMode){placeBuild();return}
- if(e.pointerType==="touch")return;
-});
-let dragging=false,lastX=0,lastY=0;
-$("game").addEventListener("pointerdown",e=>{
- if(!worldReady||!entered||buildMode)return;
- dragging=true;lastX=e.clientX;lastY=e.clientY;
- try{$("game").setPointerCapture(e.pointerId)}catch(err){}
-});
-$("game").addEventListener("pointermove",e=>{
- if(!dragging||!entered||!worldReady)return;
- const scale=(Number(settings.sensitivity)||5)*.0018;
- yaw-=(e.clientX-lastX)*scale;pitch=Math.max(-.1,Math.min(.75,pitch+(e.clientY-lastY)*scale));
- lastX=e.clientX;lastY=e.clientY;
-});
-$("game").addEventListener("pointerup",()=>dragging=false);
-$("game").addEventListener("pointercancel",()=>dragging=false);
-window.addEventListener("keydown",e=>{
- const tag=e.target.tagName;
- if(tag==="INPUT"||tag==="SELECT"||tag==="TEXTAREA")return;
- const k=e.key.toLowerCase();keysDown.add(k);
- if(["arrowup","arrowdown","arrowleft","arrowright"," "].includes(k))e.preventDefault();
- if(k===keys.build&&!e.repeat)toggleBuild();
- if(k===keys.cycle&&!e.repeat)cyclePiece();
-});
-window.addEventListener("keyup",e=>keysDown.delete(e.key.toLowerCase()));
-window.addEventListener("blur",()=>keysDown.clear());
-function resize(){
- if(!renderer||!camera)return;
- const w=Math.max(1,$("game").clientWidth),h=Math.max(1,$("game").clientHeight);
- renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
+for(let i=0;i<150;i++){
+ let x=(Math.random()-.5)*380,z=(Math.random()-.5)*380;
+ if(Math.abs(x)<15||Math.abs(z)<15)continue;
+ tree(x,z,.7+Math.random()*.9);
 }
-window.addEventListener("resize",resize);
-function animate(){
- requestAnimationFrame(animate);
- if(!worldReady)return;
- const dt=Math.min(clock.getDelta(),.04);
- if(entered){
- let forward=0,side=0;
- if(keysDown.has(keys.forward)||keysDown.has("arrowup"))forward+=1;
- if(keysDown.has(keys.back)||keysDown.has("arrowdown"))forward-=1;
- if(keysDown.has(keys.left)||keysDown.has("arrowleft"))side-=1;
- if(keysDown.has(keys.right)||keysDown.has("arrowright"))side+=1;
- if(forward||side){
- const speed=9*dt,dir=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));
+
+// Buildings
+const solid=[];
+function block(x,y,z,w,h,d,material,collide=true){
+ const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
+ m.position.set(x,y+h/2,z);m.castShadow=true;m.receiveShadow=true;scene.add(m);
+ if(collide)solid.push({x,z,w,d});
+ return m;
+}
+function house(x,z){
+ block(x,0,z,12,5,10,mat(0xe1cba2));
+ block(x,5,z,13,1,11,roofmat);
+ block(x,0,z+5.1,2,3.5,.15,wood,false);
+ block(x,2.5,z-5.1,2,1.5,.2,blue,false);
+ block(x-3,2,z-5.1,1.7,1.6,.2,blue,false);
+ block(x+3,2,z-5.1,1.7,1.6,.2,blue,false);
+}
+for(const p of [[25,22],[40,25],[-28,35],[-42,24],[32,-35],[-30,-40],[60,-5],[-65,-10]]){
+ house(p[0],p[1]);
+}
+
+// Rocks
+for(let i=0;i<55;i++){
+ let x=(Math.random()-.5)*350,z=(Math.random()-.5)*350;
+ if(Math.abs(x)<16||Math.abs(z)<16)continue;
+ let rock=new THREE.Mesh(new THREE.DodecahedronGeometry(1+Math.random()*2,0),mat(0x777e80));
+ rock.position.set(x,.7,z);rock.scale.y=.8;rock.castShadow=true;scene.add(rock);
+}
+
+// Player model
+const player=new THREE.Group();scene.add(player);
+const avatar=new THREE.Group();player.add(avatar);
+function part(parent,geo,material,x,y,z){
+ const m=new THREE.Mesh(geo,material);
+ m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;
+ parent.add(m);return m;
+}
+function capsule(parent,r,length,material,x,y,z){
+ return part(parent,new THREE.CapsuleGeometry(r,length,4,8),material,x,y,z);
+}
+// boots
+part(avatar,new THREE.BoxGeometry(.42,.25,.62),dark,-.28,.18,.05);
+part(avatar,new THREE.BoxGeometry(.42,.25,.62),dark,.28,.18,.05);
+// legs
+const legL=new THREE.Group(),legR=new THREE.Group();
+legL.position.set(-.28,1.25,0);legR.position.set(.28,1.25,0);
+avatar.add(legL,legR);
+capsule(legL,.22,.75,pants,0,-.38,0);
+capsule(legR,.22,.75,pants,0,-.38,0);
+// torso
+part(avatar,new THREE.CapsuleGeometry(.53,.8,5,10),blue,0,2.05,0);
+part(avatar,new THREE.BoxGeometry(1.03,.16,.65),dark,0,1.7,0);
+// belt and chest detail
+part(avatar,new THREE.BoxGeometry(.94,.15,.58),gold,0,1.62,0);
+part(avatar,new THREE.BoxGeometry(.2,.38,.04),white,0,2.22,-.34);
+// backpack
+part(avatar,new THREE.BoxGeometry(.55,.75,.25),dark,0,2.25,.43);
+part(avatar,new THREE.BoxGeometry(.4,.14,.29),gold,0,2.48,.58);
+// arms
+const armL=new THREE.Group(),armR=new THREE.Group();
+armL.position.set(-.66,2.45,0);armR.position.set(.66,2.45,0);
+avatar.add(armL,armR);
+capsule(armL,.19,.55,blue,0,-.3,0);
+capsule(armL,.17,.25,skin,0,-.72,0);
+capsule(armR,.19,.55,blue,0,-.3,0);
+capsule(armR,.17,.25,skin,0,-.72,0);
+// neck, head, hair and face
+part(avatar,new THREE.CylinderGeometry(.16,.18,.25,10),skin,0,2.72,0);
+part(avatar,new THREE.SphereGeometry(.39,16,12),skin,0,3.12,0);
+part(avatar,new THREE.SphereGeometry(.4,12,8,0,Math.PI*2,0,Math.PI*.55),mat(0x30241c),0,3.27,0);
+part(avatar,new THREE.BoxGeometry(.48,.13,.48),mat(0x30241c),0,3.38,-.01);
+// eyes
+part(avatar,new THREE.SphereGeometry(.045,8,8),dark,-.13,3.15,-.35);
+part(avatar,new THREE.SphereGeometry(.045,8,8),dark,.13,3.15,-.35);
+// nose
+part(avatar,new THREE.SphereGeometry(.055,8,8),skin,0,3.06,-.37);
+
+// Weapon model
+const weapon=new THREE.Group();avatar.add(weapon);
+part(weapon,new THREE.BoxGeometry(.18,.2,1.05),dark,.48,2.1,-.55);
+part(weapon,new THREE.BoxGeometry(.13,.3,.25),mat(0x161b20),.48,1.89,-.4);
+part(weapon,new THREE.BoxGeometry(.12,.12,.35),gold,.48,2.23,-.5);
+weapon.position.z=-.05;
+
+// Loot chest
+const chests=[];
+function chest(x,z){
+ const g=new THREE.Group();
+ part(g,new THREE.BoxGeometry(1.35,.8,.85),gold,0,.45,0);
+ part(g,new THREE.BoxGeometry(1.4,.16,.9),mat(0xffe47a),0,.86,0);
+ part(g,new THREE.BoxGeometry(.18,.3,.09),dark,0,.55,-.46);
+ const glow=new THREE.PointLight(0xffc52c,1.5,7);glow.position.y=1.5;g.add(glow);
+ g.position.set(x,0,z);scene.add(g);chests.push({g,opened:false});
+}
+for(const p of [[8,15],[-10,28],[37,17],[-36,33],[48,-30],[-35,-34],[15,-45],[70,5],[0,80],[-75,12]])chest(...p);
+
+// Gun pickups
+const pickups=[];
+function gunPickup(x,z){
+ const g=new THREE.Group();
+ part(g,new THREE.BoxGeometry(.2,.2,1),gold,0,0,0);
+ g.position.set(x,.65,z);scene.add(g);pickups.push({g,taken:false});
+}
+for(let i=0;i<18;i++)gunPickup((Math.random()-.5)*150,(Math.random()-.5)*150);
+
+// Enemy bots
+const enemies=[];
+const botColors=[0xd74639,0x7b55cf,0xd87b2e,0x20a7a3];
+function makeBot(x,z,i){
+ const g=new THREE.Group();
+ part(g,new THREE.CapsuleGeometry(.42,.7,4,8),mat(botColors[i%4]),0,1.55,0);
+ part(g,new THREE.SphereGeometry(.32,12,10),skin,0,2.35,0);
+ part(g,new THREE.SphereGeometry(.34,10,8,0,Math.PI*2,0,Math.PI*.55),dark,0,2.48,0);
+ part(g,new THREE.BoxGeometry(.3,.2,.8),dark,.42,1.6,-.3);
+ g.position.set(x,0,z);scene.add(g);
+ enemies.push({g,hp:100,alive:true,shoot:1.5+Math.random()*2,speed:1.2+Math.random()*1.2,phase:Math.random()*5});
+}
+for(let i=0;i<10;i++){
+ let a=Math.random()*Math.PI*2,r=35+Math.random()*95;
+ makeBot(Math.cos(a)*r,Math.sin(a)*r,i);
+}
+
+// Storm boundary
+const stormmat=new THREE.MeshBasicMaterial({color:0x5c70ff,transparent:true,opacity:.12,side:THREE.DoubleSide});
+const storm=new THREE.Mesh(new THREE.CylinderGeometry(1,1,65,80,1,true),stormmat);
+storm.position.y=32.5;scene.add(storm);
+const ring=new THREE.Mesh(new THREE.TorusGeometry(1,.45,5,100),new THREE.MeshBasicMaterial({color:0x7d8bff,transparent:true,opacity:.85}));
+ring.rotation.x=Math.PI/2;ring.position.y=.3;scene.add(ring);
+
+const keys={};
+let yaw=0,pitch=-.13,health=100,shield=50,kills=0,ammo=30,reserve=90;
+let started=false,ended=false,aiming=false,jumping=false,vy=0;
+let elapsed=0,stormRadius=175,fireCooldown=0;
+let messageTimer=0,weaponName='RIFLE';
+const clock=new THREE.Clock();
+const raycaster=new THREE.Raycaster();
+const direction=new THREE.Vector3();
+const tmp=new THREE.Vector3();
+let notice='Find weapons and survive!';
+const msg=document.getElementById('message');
+function say(s){notice=s;messageTimer=2.5;msg.textContent=s}
+function updateHUD(){
+ document.getElementById('hpnum').textContent=Math.ceil(health);
+ document.getElementById('shnum').textContent=Math.ceil(shield);
+ document.getElementById('health').style.width=health+'%';
+ document.getElementById('shield').style.width=(shield/100*100)+'%';
+ document.getElementById('weapon').textContent=weaponName+' · '+ammo+' / '+reserve;
+ document.getElementById('kills').textContent='ELIMINATIONS: '+kills;
+ document.getElementById('alive').textContent='PLAYERS LEFT: '+(1+enemies.filter(e=>e.alive).length);
+ document.getElementById('coords').textContent='X: '+Math.round(player.position.x)+' Z: '+Math.round(player.position.z);
+ document.getElementById('storm').textContent='STORM: '+Math.max(0,Math.ceil(180-elapsed))+'s';
+}
+function endGame(victory){
+ ended=true;document.exitPointerLock?.();
+ document.getElementById('end').style.display='flex';
+ document.getElementById('endtitle').textContent=victory?'VICTORY ROYALE!':'ELIMINATED';
+ document.getElementById('endtext').textContent='Eliminations: '+kills;
+}
+function damage(n){
+ let left=n;
+ if(shield>0){let s=Math.min(shield,left);shield-=s;left-=s}
+ health=Math.max(0,health-left);
+ if(health<=0)endGame(false);
+}
+function clampPlayer(){
+ player.position.x=THREE.MathUtils.clamp(player.position.x,-205,205);
+ player.position.z=THREE.MathUtils.clamp(player.position.z,-205,205);
+ // simple building collision
+ for(const b of solid){
+  const px=player.position.x,pz=player.position.z;
+  if(Math.abs(px-b.x)<b.w/2+.5&&Math.abs(pz-b.z)<b.d/2+.5){
+   const dx=px-b.x,dz=pz-b.z;
+   if(Math.abs(dx/b.w)>Math.abs(dz/b.d))player.position.x=b.x+Math.sign(dx)*(b.w/2+.65);
+   else player.position.z=b.z+Math.sign(dz)*(b.d/2+.65);
+  }
+ }
+}
+function shoot(){
+ if(!started||ended||fireCooldown>0)return;
+ if(ammo<=0){say('Press R to reload');return}
+ ammo--;fireCooldown=.14;
+ // Aim toward center of screen
+ raycaster.setFromCamera(new THREE.Vector2(0,0),camera);
+ const targets=enemies.filter(e=>e.alive).map(e=>e.g);
+ const hits=raycaster.intersectObjects(targets,true);
+ if(hits.length){
+  let target=enemies.find(e=>e.alive&&e.g===hits[0].object.parent);
+  if(!target){
+   target=enemies.find(e=>e.alive&&e.g.getObjectById(hits[0].object.id));
+  }
+  if(!target){
+   target=enemies.find(e=>e.alive&&hits[0].object.parent?.parent===e.g);
+  }
+  if(!target){
+   target=enemies.find(e=>e.alive&&e.g.position.distanceTo(hits[0].object.getWorldPosition(tmp))<2);
+  }
+  if(target){
+   target.hp-=34;
+   if(target.hp<=0){target.alive=false;scene.remove(target.g);kills++;say('ENEMY ELIMINATED!');}
+  }
+ }
+ updateHUD();
+}
+function interact(){
+ if(!started||ended)return;
+ let found=false;
+ for(const c of chests){
+  if(!c.opened&&c.g.position.distanceTo(player.position)<4){
+   c.opened=true;scene.remove(c.g);
+   reserve+=30;shield=Math.min(100,shield+15);
+   say('CHEST OPENED! Ammo and shield collected');found=true;break;
+  }
+ }
+ if(!found)for(const p of pickups){
+  if(!p.taken&&p.g.position.distanceTo(player.position)<3){
+   p.taken=true;scene.remove(p.g);reserve+=25;weaponName='RARE RIFLE';
+   say('RIFLE AMMO COLLECTED');found=true;break;
+  }
+ }
+ if(!found)say('Move closer to a chest or weapon');
+ updateHUD();
+}
+function reload(){
+ if(reserve<=0||ammo>=30)return;
+ const amount=Math.min(30-ammo,reserve);ammo+=amount;reserve-=amount;
+ updateHUD();say('RELOADED');
+}
+function start(){
+ if(started)return;
+ started=true;document.getElementById('start').style.display='none';
+ renderer.domElement.requestPointerLock?.();
+}
+document.getElementById('play').addEventListener('click',start);
+document.addEventListener('keydown',e=>{
+ keys[e.code]=true;
+ if(e.code==='Space')e.preventDefault();
+ if(e.code==='KeyE'&&!e.repeat)interact();
+ if(e.code==='KeyR'&&!e.repeat)reload();
+});
+document.addEventListener('keyup',e=>keys[e.code]=false);
+document.addEventListener('mousemove',e=>{
+ if(document.pointerLockElement===renderer.domElement){
+  yaw-=e.movementX*.0022;
+  pitch=THREE.MathUtils.clamp(pitch-e.movementY*.0018,-.65,.35);
+ }
+});
+document.addEventListener('mousedown',e=>{
+ if(!started||ended)return;
+ if(e.button===0){
+  if(document.pointerLockElement!==renderer.domElement){
+   renderer.domElement.requestPointerLock?.();return;
+  }
+  shoot();
+ }
+ if(e.button===2)aiming=true;
+});
+document.addEventListener('mouseup',e=>{if(e.button===2)aiming=false});
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('pointerlockchange',()=>{
+ document.getElementById('help').style.display=
+  document.pointerLockElement===renderer.domElement?'block':'block';
+});
+window.addEventListener('resize',()=>{
+ camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
+ renderer.setSize(innerWidth,innerHeight);
+});
+
+function update(dt){
+ if(!started||ended)return;
+ elapsed+=dt;fireCooldown=Math.max(0,fireCooldown-dt);
+ if(messageTimer>0){messageTimer-=dt;if(messageTimer<=0)msg.textContent=''}
+ const sprint=keys.ShiftLeft||keys.ShiftRight;
+ const speed=sprint?13:8;
+ const forward=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));
  const right=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));
- const move=dir.multiplyScalar(forward).add(right.multiplyScalar(side)).normalize().multiplyScalar(speed);
- const nx=player.position.x+move.x,nz=player.position.z+move.z;
- if(Math.hypot(nx,nz)<45&&!obstacles.some(o=>Math.hypot(nx-o.x,nz-o.z)<o.r+.7)){
- player.position.x=nx;player.position.z=nz;
+ const move=new THREE.Vector3();
+ if(keys.KeyW||keys.ArrowUp)move.add(forward);
+ if(keys.KeyS||keys.ArrowDown)move.sub(forward);
+ if(keys.KeyD||keys.ArrowRight)move.add(right);
+ if(keys.KeyA||keys.ArrowLeft)move.sub(right);
+ if(move.lengthSq()>0){
+  move.normalize();player.position.addScaledVector(move,speed*dt);
+  // Character faces direction of travel
+  avatar.rotation.y=Math.atan2(-move.x,-move.z);
+  const swing=Math.sin(elapsed*12)*(sprint?.65:.4);
+  legL.rotation.x=swing;legR.rotation.x=-swing;
+  armL.rotation.x=-swing*.55;armR.rotation.x=swing*.55;
+ }else{
+  legL.rotation.x=THREE.MathUtils.damp(legL.rotation.x,0,10,dt);
+  legR.rotation.x=THREE.MathUtils.damp(legR.rotation.x,0,10,dt);
+  armL.rotation.x=THREE.MathUtils.damp(armL.rotation.x,0,10,dt);
+  armR.rotation.x=THREE.MathUtils.damp(armR.rotation.x,0,10,dt);
  }
- if(forward)player.rotation.y=yaw;
+ if(keys.Space&&!jumping){jumping=true;vy=8}
+ if(jumping){
+  player.position.y+=vy*dt;vy-=22*dt;
+  if(player.position.y<=0){player.position.y=0;vy=0;jumping=false}
  }
- for(let i=shards.length-1;i>=0;i--){
- const s=shards[i];s.rotation.y+=dt*1.8;s.position.y=.9+Math.sin(performance.now()*.002+i)*.2;
- if(player.position.distanceTo(s.position)<1.65){
- scene.remove(s);shards.splice(i,1);data.shards++;data.xp+=10;data.materials+=2;
- if(data.shards%5===0){data.bucks+=10;data.xp+=50;message("Shard streak! +10 V-Bucks and bonus XP!")}
- else message("+10 XP and +2 materials!");
- persist();renderPass();spawnShard();
+ clampPlayer();
+
+ // Third-person camera
+ const camDistance=aiming?4.2:7.5;
+ const camHeight=aiming?2.8:4.0;
+ const target=new THREE.Vector3(player.position.x,player.position.y+2.2,player.position.z);
+ const horizontal=new THREE.Vector3(Math.sin(yaw),0,Math.cos(yaw));
+ const desired=target.clone().addScaledVector(horizontal,camDistance);
+ desired.y+=camHeight+pitch*5;
+ camera.position.lerp(desired,1-Math.exp(-8*dt));
+ camera.lookAt(target.clone().add(new THREE.Vector3(0,pitch*5,0)));
+ camera.fov=THREE.MathUtils.damp(camera.fov,aiming?53:70,8,dt);
+ camera.updateProjectionMatrix();
+ weapon.rotation.x=aiming?-.08:0;
+
+ // Storm gradually shrinks
+ stormRadius=Math.max(18,175-elapsed*.7);
+ storm.scale.set(stormRadius,1,stormRadius);
+ ring.scale.set(stormRadius,stormRadius,1);
+ if(Math.hypot(player.position.x,player.position.z)>stormRadius){
+  damage(5*dt);say('WARNING: YOU ARE IN THE STORM!');
  }
+
+ // Enemy AI
+ for(const e of enemies){
+  if(!e.alive)continue;
+  e.shoot-=dt;
+  const delta=player.position.clone().sub(e.g.position);
+  const dist=delta.length();
+  if(dist>9&&dist<95){
+   delta.y=0;delta.normalize();
+   e.g.position.addScaledVector(delta,e.speed*dt);
+   e.g.rotation.y=Math.atan2(-delta.x,-delta.z);
+  }
+  if(dist<48&&e.shoot<=0){
+   e.shoot=1.7+Math.random()*1.7;
+   if(Math.random()<.33)damage(5+Math.random()*6);
+  }
+  e.g.position.y=Math.abs(Math.sin(elapsed*3+e.phase))*.05;
  }
- }
- const target=new THREE.Vector3(player.position.x+Math.sin(yaw)*(-8),player.position.y+4+pitch*4,player.position.z+Math.cos(yaw)*8);
- camera.position.lerp(target,1-Math.exp(-5*dt));
- camera.lookAt(player.position.x,player.position.y+1.3,player.position.z);
- renderer.render(scene,camera);
+ if(enemies.every(e=>!e.alive))endGame(true);
+ updateHUD();
 }
-function renderPass(){const old=$("passGrid");if(old)buildPass()}
-function buildPass(){
- const root=$("passGrid");root.replaceChildren();
- rewards.forEach((r,i)=>{
- const unlocked=data.xp>=r.xp,done=claimed.includes(i);
- root.appendChild(makeCard(r.icon,r.name,r.desc,"Unlock at "+r.xp+" XP",done?"CLAIMED":unlocked?"CLAIM REWARD":"LOCKED",()=>{
- if(!unlocked||done)return;claimed.push(i);if(i===0)data.bucks+=10;persist();buildPass();
- }));
- root.lastChild.querySelector("button").disabled=!unlocked||done;
- });
+player.position.set(0,0,0);
+camera.position.set(0,5,8);
+function loop(){
+ requestAnimationFrame(loop);
+ const dt=Math.min(clock.getDelta(),.035);
+ update(dt);renderer.render(scene,camera);
 }
-function makeCard(icon,name,desc,price,label,fn){
- const c=document.createElement("div");c.className="card";
- const a=document.createElement("div");a.className="art";a.textContent=icon;c.appendChild(a);
- const h=document.createElement("h3");h.textContent=name;c.appendChild(h);
- const p=document.createElement("p");p.className="muted";p.textContent=desc;c.appendChild(p);
- const pr=document.createElement("p");pr.textContent=price;c.appendChild(pr);
- const b=document.createElement("button");b.textContent=label;b.onclick=fn;c.appendChild(b);return c;
-}
-const originalRenderPass=renderPass;
-renderAll();
-if(window.THREE){init3D()}else{message("Three.js did not load. Check your internet connection and refresh.")}
+loop();
 </script>
 </body>
 </html>
