@@ -1,0 +1,552 @@
+
+/* ========================================
+   FORTNIGHT — BATTLE ROYALE
+   Main game interface
+======================================== */
+
+:root {
+  color-scheme: dark;
+  --gold: #ffcf40;
+  --gold-light: #ffe88a;
+  --blue: #168bd4;
+  --dark-blue: #10253b;
+  --panel: rgba(10, 25, 42, 0.88);
+  --border: rgba(255, 255, 255, 0.28);
+  --text: #ffffff;
+  --muted: #c8d5e3;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #172e43;
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+  user-select: none;
+}
+
+button {
+  font: inherit;
+}
+
+button:focus-visible {
+  outline: 3px solid white;
+  outline-offset: 4px;
+}
+
+#game-container {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 40%, #427ea0, #172e43 75%);
+}
+
+#game-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  outline: none;
+}
+
+/* ========================================
+   MENUS
+======================================== */
+
+.screen {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background:
+    linear-gradient(
+      110deg,
+      rgba(5, 17, 34, 0.88),
+      rgba(10, 35, 56, 0.43),
+      rgba(5, 17, 34, 0.78)
+    );
+  backdrop-filter: blur(4px);
+}
+
+.hidden {
+  display: none !important;
+}
+
+.menu-content {
+  width: min(100%, 560px);
+  padding: 35px;
+  text-align: center;
+  background: rgba(10, 27, 44, 0.84);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-top: 4px solid var(--gold);
+  border-radius: 12px;
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.5);
+  animation: menu-enter 0.45s ease-out;
+}
+
+.small-menu {
+  max-width: 420px;
+}
+
+.game-logo {
+  color: var(--gold);
+  font-size: clamp(44px, 10vw, 82px);
+  font-weight: 1000;
+  font-style: italic;
+  letter-spacing: -4px;
+  line-height: 1;
+  text-shadow:
+    3px 3px 0 #ad5425,
+    6px 6px 0 rgba(0, 0, 0, 0.35);
+  transform: skew(-5deg);
+}
+
+.game-subtitle {
+  margin-top: 13px;
+  color: white;
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 8px;
+}
+
+.menu-description {
+  margin: 30px 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.menu-footer {
+  margin-top: 28px;
+  color: #8ea4b9;
+  font-size: 10px;
+  letter-spacing: 3px;
+}
+
+.menu-content h1 {
+  margin: 0 0 24px;
+  font-size: clamp(36px, 7vw, 56px);
+  font-weight: 1000;
+  font-style: italic;
+  color: var(--gold);
+}
+
+.primary-button,
+.secondary-button {
+  display: block;
+  width: 100%;
+  min-height: 54px;
+  margin: 12px 0;
+  padding: 15px 24px;
+  border: 0;
+  border-radius: 6px;
+  font-size: 17px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    filter 0.15s ease,
+    background 0.15s ease;
+}
+
+.primary-button {
+  color: #172536;
+  background: linear-gradient(180deg, #ffe77d, #ffbd26);
+  box-shadow: 0 5px 0 #ad7021;
+}
+
+.primary-button:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+}
+
+.primary-button:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #ad7021;
+}
+
+.secondary-button {
+  color: white;
+  background: #294863;
+  border: 1px solid var(--border);
+}
+
+.secondary-button:hover {
+  background: #365f80;
+}
+
+#loading-status {
+  min-height: 18px;
+  margin-top: 17px;
+  color: #a8c6da;
+  font-size: 12px;
+}
+
+/* ========================================
+   HUD PANELS
+======================================== */
+
+#game-hud {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hud-panel {
+  position: absolute;
+  top: 16px;
+  min-width: 185px;
+  padding: 13px 16px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  border-radius: 5px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+  font-size: 13px;
+  line-height: 1.9;
+  text-shadow: 0 1px 2px #000;
+}
+
+.top-left {
+  left: 16px;
+}
+
+.top-right {
+  right: 16px;
+  text-align: right;
+  border-left: 1px solid var(--border);
+  border-right: 3px solid var(--gold);
+}
+
+.hud-label {
+  margin-bottom: 4px;
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+#player-status {
+  color: #7dffac;
+  font-weight: bold;
+}
+
+#players-alive,
+#eliminations,
+#island-position {
+  color: #d0ddea;
+}
+
+#storm-timer {
+  color: #ffda6b;
+  font-weight: bold;
+}
+
+#storm-status {
+  color: #b9baff;
+}
+
+/* ========================================
+   CROSSHAIR AND MESSAGES
+======================================== */
+
+#crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 26px;
+  font-weight: 400;
+  text-shadow:
+    1px 1px 2px #000,
+    -1px -1px 2px #000;
+  transform: translate(-50%, -50%);
+}
+
+#interaction-prompt {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 32px);
+  transform: translateX(-50%);
+  padding: 8px 14px;
+  color: white;
+  font-size: 13px;
+  font-weight: bold;
+  text-align: center;
+  background: rgba(8, 22, 38, 0.9);
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+}
+
+#game-message {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  width: max-content;
+  max-width: 90%;
+  color: var(--gold-light);
+  font-size: clamp(16px, 3vw, 25px);
+  font-weight: 1000;
+  text-align: center;
+  text-shadow: 2px 2px 4px #000;
+  transform: translateX(-50%);
+}
+
+/* ========================================
+   HEALTH AND SHIELD
+======================================== */
+
+.bottom-left {
+  top: auto;
+  bottom: 55px;
+  left: 16px;
+  width: 235px;
+  border-left-color: #3ee66f;
+}
+
+.stat-heading {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.stat-bar {
+  width: 100%;
+  height: 13px;
+  margin: 5px 0 12px;
+  overflow: hidden;
+  background: #243444;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+
+.health-fill,
+.shield-fill {
+  width: 100%;
+  height: 100%;
+  transition: width 0.15s linear;
+}
+
+.health-fill {
+  background: linear-gradient(90deg, #17b84e, #61f38b);
+}
+
+.shield-fill {
+  background: linear-gradient(90deg, #087edb, #4cc8ff);
+}
+
+/* ========================================
+   WEAPON INVENTORY
+======================================== */
+
+.bottom-right {
+  position: absolute;
+  right: 16px;
+  bottom: 55px;
+  display: flex;
+  align-items: flex-end;
+  gap: 7px;
+}
+
+.weapon-slot {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 82px;
+  height: 72px;
+  padding: 8px 4px;
+  background: rgba(10, 25, 42, 0.85);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+  text-align: center;
+}
+
+.weapon-slot > span {
+  position: absolute;
+  top: 3px;
+  left: 5px;
+  color: #c7d3df;
+  font-size: 10px;
+}
+
+.weapon-slot strong {
+  margin-top: 10px;
+  font-size: 10px;
+  overflow-wrap: anywhere;
+}
+
+.weapon-slot.selected {
+  background: rgba(255, 202, 48, 0.25);
+  border-color: var(--gold);
+  box-shadow: 0 0 12px rgba(255, 202, 48, 0.22);
+}
+
+#ammo-counter {
+  position: absolute;
+  right: 0;
+  bottom: -29px;
+  color: white;
+  font-size: 17px;
+  font-weight: 900;
+  text-shadow: 1px 1px 3px #000;
+}
+
+/* ========================================
+   CONTROL HELP
+======================================== */
+
+#control-hint {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  width: max-content;
+  max-width: calc(100% - 24px);
+  padding: 8px 12px;
+  color: #dce8f2;
+  background: rgba(7, 20, 33, 0.82);
+  border-radius: 4px;
+  font-size: 11px;
+  text-align: center;
+  transform: translateX(-50%);
+}
+
+/* ========================================
+   ANIMATIONS
+======================================== */
+
+@keyframes menu-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ========================================
+   SMALL SCREENS
+======================================== */
+
+@media (max-width: 650px) {
+  .screen {
+    padding: 12px;
+  }
+
+  .menu-content {
+    padding: 24px 18px;
+  }
+
+  .game-logo {
+    letter-spacing: -2px;
+  }
+
+  .game-subtitle {
+    font-size: 13px;
+    letter-spacing: 5px;
+  }
+
+  .hud-panel {
+    top: 8px;
+    min-width: 0;
+    padding: 8px;
+    font-size: 10px;
+    line-height: 1.7;
+  }
+
+  .top-left {
+    left: 8px;
+  }
+
+  .top-right {
+    right: 8px;
+  }
+
+  .hud-label {
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+
+  .bottom-left {
+    bottom: 72px;
+    left: 8px;
+    width: 165px;
+  }
+
+  .bottom-right {
+    right: 8px;
+    bottom: 72px;
+    gap: 3px;
+  }
+
+  .weapon-slot {
+    width: 55px;
+    height: 55px;
+  }
+
+  .weapon-slot strong {
+    font-size: 8px;
+  }
+
+  #ammo-counter {
+    font-size: 13px;
+  }
+
+  #control-hint {
+    bottom: 7px;
+    font-size: 9px;
+    line-height: 1.5;
+  }
+}
+
+@media (max-height: 480px) {
+  .menu-content {
+    padding: 15px;
+  }
+
+  .game-logo {
+    font-size: 42px;
+  }
+
+  .menu-description {
+    margin: 12px 0;
+  }
+
+  .primary-button,
+  .secondary-button {
+    min-height: 40px;
+    margin: 7px 0;
+    padding: 10px;
+  }
+
+  .menu-footer {
+    margin-top: 12px;
+  }
+}
