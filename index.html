@@ -4,419 +4,462 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FORTNIGHT</title>
+<title>FORTNIGHT | 3D Island</title>
 <style>
-:root{--blue:#38c8ff;--panel:#101c30;--gold:#ffd45c}
 *{box-sizing:border-box}
-body{margin:0;background:#07111f;color:white;font-family:Arial,sans-serif}
-button{font-weight:bold;cursor:pointer;color:white;border:1px solid #ffffff30;
-border-radius:8px;padding:12px 17px;background:#243750}
-button:hover{filter:brightness(1.25)}
-button:focus-visible{outline:3px solid white}
-header{height:68px;display:flex;align-items:center;gap:12px;padding:0 18px;
-background:#091322;border-bottom:2px solid #2d435c;position:sticky;top:0;z-index:5}
-.logo{font-size:25px;font-weight:1000;font-style:italic;color:var(--blue);letter-spacing:2px}
-.coins{margin-left:auto;color:var(--gold);font-weight:bold}
-nav{display:flex;gap:7px;overflow-x:auto;padding:12px;background:#0c192b}
+body{margin:0;background:#07111f;color:#fff;font-family:Arial,sans-serif}
+button,select{cursor:pointer;font-weight:bold;border:1px solid #ffffff35;border-radius:8px;padding:11px 14px;background:#21344c;color:white}
+button:hover{filter:brightness(1.2)}
+button:disabled{opacity:.45;cursor:default}
+header{height:64px;display:flex;align-items:center;gap:14px;padding:0 16px;background:#081321;border-bottom:2px solid #30455c;position:relative;z-index:3}
+.logo{font-size:24px;font-weight:1000;font-style:italic;letter-spacing:2px;color:#42d2ff}
+.money{margin-left:auto;color:#72ffb1;font-weight:bold}
+nav{display:flex;gap:7px;overflow-x:auto;padding:10px;background:#0b1828;position:relative;z-index:3}
 nav button{white-space:nowrap}
-nav button.active{background:var(--blue);color:#07111f}
-main{max-width:1200px;margin:auto;padding:20px}
+nav button.active{background:#42d2ff;color:#061522}
+main{max-width:1250px;margin:auto;padding:16px}
 .page{display:none}.page.active{display:block}
-.hero{min-height:260px;border-radius:18px;padding:28px;display:flex;flex-direction:column;
-justify-content:center;background:linear-gradient(120deg,#12648a,#182d59 55%,#512b76);
-border:1px solid #ffffff30;overflow:hidden}
-.hero h1{font-size:clamp(40px,8vw,76px);line-height:.95;margin:0 0 14px;
-font-weight:1000;font-style:italic}
-.hero p{max-width:500px;line-height:1.6}
-.primary{background:#55d5ff;color:#07111f;border:0;font-size:17px;padding:15px 26px}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin:20px 0}
-.card{background:var(--panel);border:1px solid #ffffff20;border-radius:12px;padding:16px}
-.art{height:110px;border-radius:9px;display:grid;place-items:center;font-size:55px;
-background:linear-gradient(135deg,#235a79,#6844a4);margin-bottom:12px}
-.card h3{margin:8px 0}.muted{color:#b7c5d8;line-height:1.5}
-h2{margin-top:8px}
-#game{display:block;width:100%;height:auto;aspect-ratio:16/9;border:2px solid #627a90;
-border-radius:12px;background:#76c5e9;touch-action:none}
-.game-layout{display:grid;grid-template-columns:minmax(0,2fr) minmax(210px,1fr);gap:16px}
-.stats,.settings-panel{background:var(--panel);border-radius:12px;padding:16px;margin-bottom:14px}
-.stats p{margin:8px 0}
-select,input{background:#091322;color:white;border:1px solid #61748d;border-radius:6px;
-padding:10px;max-width:100%}
-.setting-row{display:flex;align-items:center;justify-content:space-between;gap:12px;
-padding:12px 0;border-bottom:1px solid #ffffff20}
-.key{min-width:65px}
-.notice{padding:12px;background:#17364b;border-radius:8px;color:#c9f1ff;line-height:1.5}
-footer{text-align:center;color:#8da2ba;padding:30px}
-@media(max-width:700px){.game-layout{grid-template-columns:1fr}header{padding:0 10px}
-main{padding:12px}.hero{padding:20px}.logo{font-size:21px}}
+.hero{padding:26px;border-radius:15px;background:linear-gradient(120deg,#12678d,#202d66,#643b8b);margin-bottom:18px}
+.hero h1{font-size:clamp(38px,7vw,68px);font-style:italic;line-height:.95;margin:8px 0}
+.hero p{line-height:1.5;color:#e2f5ff}
+.primary{background:#42d2ff;color:#061522;border:0;font-size:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px;margin:16px 0}
+.card,.panel{background:#101e31;border:1px solid #ffffff20;border-radius:12px;padding:15px}
+.art{height:95px;display:grid;place-items:center;border-radius:9px;background:linear-gradient(140deg,#245979,#6745a1);font-size:48px}
+.muted{color:#b6c8dc;line-height:1.5}
+#gameWrap{position:relative;border:2px solid #486783;border-radius:12px;overflow:hidden;background:#83c9e8}
+#game{display:block;width:100%;height:min(63vh,570px);min-height:300px;touch-action:none}
+#hud{position:absolute;inset:10px 10px auto;pointer-events:none;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;text-shadow:1px 2px 3px #000}
+.hudbox{background:#071522c9;padding:8px 10px;border-radius:7px;font-size:13px}
+#message{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:#071522dc;padding:10px 14px;border-radius:8px;text-align:center;max-width:90%;pointer-events:none}
+.gameButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.layout{display:grid;grid-template-columns:minmax(0,2fr) minmax(210px,1fr);gap:15px}
+.setting{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #ffffff20}
+.key{min-width:68px}
+footer{text-align:center;padding:25px;color:#8198b1}
+@media(max-width:700px){main{padding:10px}.layout{grid-template-columns:1fr}.hero{padding:19px}header{padding:0 9px}.logo{font-size:20px}#game{height:55vh}}
 </style>
 </head>
 <body>
 <header>
-  <div class="logo">FORTNIGHT</div>
-  <div class="coins">🟢 <span id="coinCount">0</span> V-Bucks</div>
+ <div class="logo">FORTNIGHT</div>
+ <div class="money">🟢 <span id="bucks">0</span> V-Bucks</div>
 </header>
 <nav>
-  <button class="active" data-page="play">▶ PLAY</button>
-  <button data-page="locker">♟ LOCKER</button>
-  <button data-page="pass">★ BATTLE PASS</button>
-  <button data-page="shop">✦ ITEM SHOP</button>
-  <button data-page="settings">⚙ SETTINGS</button>
+ <button class="active" data-page="play">▶ PLAY</button>
+ <button data-page="locker">♟ LOCKER</button>
+ <button data-page="pass">★ BATTLE PASS</button>
+ <button data-page="shop">✦ ITEM SHOP</button>
+ <button data-page="settings">⚙ SETTINGS</button>
 </nav>
-
 <main>
 <section id="play" class="page active">
-  <div class="hero">
-    <p>YOUR ISLAND. YOUR RULES.</p>
-    <h1>BUILD YOUR<br>OWN LEGEND.</h1>
-    <p>Explore the island, collect energy shards, build structures and stay inside the safe zone.</p>
-    <div><button class="primary" id="start">PLAY NOW →</button></div>
-  </div>
-  <h2>ISLAND EXPEDITION</h2>
-  <p class="muted">A playable prototype. Explore, gather shards and build to earn XP.</p>
-  <div class="game-layout">
-    <div>
-      <canvas id="game" width="960" height="540" aria-label="Playable island game"></canvas>
-      <p class="muted">Move: WASD / arrows · Build: B · Switch build type: Q · Collect shards by walking over them.</p>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button id="buildBtn">BUILD: OFF</button>
-        <button id="buildType">TYPE: WALL</button>
-        <button id="resetGame">RESTART EXPEDITION</button>
-      </div>
+ <div class="hero">
+  <p>WELCOME TO YOUR ISLAND</p>
+  <h1>DROP IN.<br>BUILD UP.</h1>
+  <p>Explore a 3D island, collect glowing shards, and construct your own defenses.</p>
+  <button class="primary" id="enter">ENTER THE ISLAND →</button>
+ </div>
+ <div class="layout">
+  <div>
+   <div id="gameWrap">
+    <div id="game"></div>
+    <div id="hud">
+     <div class="hudbox">✦ Shards: <b id="shards">0</b><br>★ XP: <b id="xp">0</b></div>
+     <div class="hudbox">▰ Materials: <b id="materials">20</b><br>⌂ Builds: <b id="builds">0</b></div>
     </div>
-    <aside>
-      <div class="stats">
-        <h3>EXPEDITION STATUS</h3>
-        <p>✦ Shards: <b id="shardCount">0</b></p>
-        <p>★ XP: <b id="xpCount">0</b></p>
-        <p>▰ Materials: <b id="matCount">10</b></p>
-        <p>⌂ Structures: <b id="structureCount">0</b></p>
-        <p>◉ Safe zone: <b id="zoneStatus">STABLE</b></p>
-      </div>
-      <div class="stats">
-        <h3>HOW TO PLAY</h3>
-        <p class="muted">1. Explore the green island.</p>
-        <p class="muted">2. Collect glowing shards.</p>
-        <p class="muted">3. Gather materials and build.</p>
-        <p class="muted">4. Avoid the purple storm border.</p>
-        <p class="muted">Every 5 shards earns 50 XP and 10 coins.</p>
-      </div>
-    </aside>
+    <div id="message">Click ENTER THE ISLAND, then move with WASD.</div>
+   </div>
+   <div class="gameButtons">
+    <button id="buildToggle">BUILD: OFF (B)</button>
+    <button id="cycle">PIECE: WALL (Q)</button>
+    <button id="removeBuild">REMOVE LAST BUILD</button>
+    <button id="restart">RESET ISLAND</button>
+   </div>
+   <p class="muted">WASD: move · Mouse: look around · B: building mode · Q: change piece · Click: place build. Collect the floating blue shards.</p>
   </div>
+  <aside>
+   <div class="panel">
+    <h3>ISLAND STATUS</h3>
+    <p>V-Bucks: <b id="bucks2">0</b></p>
+    <p>Level: <b id="level">1</b></p>
+    <p>Outfit: <b id="equipped">Trailblazer</b></p>
+    <p class="muted">Every 5 shards earns 10 V-Bucks and bonus XP.</p>
+   </div>
+   <div class="panel">
+    <h3>HOW TO PLAY</h3>
+    <p class="muted">1. Enter the island.</p>
+    <p class="muted">2. Move around and collect blue shards.</p>
+    <p class="muted">3. Press B to enable building.</p>
+    <p class="muted">4. Press Q to switch between walls, floors, ramps, and roofs.</p>
+    <p class="muted">5. Click the ground to place a structure.</p>
+   </div>
+  </aside>
+ </div>
 </section>
-
 <section id="locker" class="page">
-  <div class="hero"><h1>YOUR LOCKER</h1><p>Choose your expedition style. Your selected outfit is saved in this browser.</p></div>
-  <div class="cards" id="lockerCards"></div>
+ <div class="hero"><h1>YOUR LOCKER</h1><p>Choose an outfit for your next island run.</p></div>
+ <div id="lockerGrid" class="grid"></div>
 </section>
-
 <section id="pass" class="page">
-  <div class="hero"><h1>BATTLE PASS</h1><p>Play the expedition, earn XP, level up and claim your rewards.</p>
-  <p>LEVEL <b id="passLevel">1</b> · XP <b id="passXP">0</b></p></div>
-  <div id="passCards" class="cards"></div>
+ <div class="hero"><h1>BATTLE PASS</h1><p>Earn XP by exploring and collecting shards.</p><p>LEVEL <b id="passLevel">1</b> · <b id="passXP">0</b> XP</p></div>
+ <div id="passGrid" class="grid"></div>
 </section>
-
 <section id="shop" class="page">
-  <div class="hero"><h1>ITEM SHOP</h1><p>Browse the latest FORTNIGHT cosmetics. Purchases use free in-game coins, not real money.</p></div>
-  <div id="shopCards" class="cards"></div>
+ <div class="hero"><h1>ITEM SHOP</h1><p>Spend your earned V-Bucks on original cosmetics.</p></div>
+ <div id="shopGrid" class="grid"></div>
 </section>
-
 <section id="settings" class="page">
-  <div class="hero"><h1>SETTINGS</h1><p>Make the controls yours. Select a key, then press the replacement key.</p></div>
-  <div class="settings-panel">
-    <h2>KEYBOARD CONTROLS</h2>
-    <p class="muted">Click a control button, then press any key to remap it. Changes are saved in this browser.</p>
-    <div id="keySettings"></div>
-    <button id="resetKeys">RESTORE DEFAULT KEYS</button>
-  </div>
-  <div class="settings-panel">
-    <h2>GAME SETTINGS</h2>
-    <div class="setting-row"><label for="sensitivity">Movement sensitivity</label>
-      <input id="sensitivity" type="range" min="1" max="10" value="5"></div>
-    <div class="setting-row"><label for="graphics">Graphics quality</label>
-      <select id="graphics"><option>Performance</option><option selected>Balanced</option><option>High</option></select>
-    </div>
-    <div class="setting-row"><label for="sound">Sound effects</label><input id="sound" type="checkbox" checked></div>
-    <button id="saveSettings">SAVE SETTINGS</button>
-    <p id="settingsMessage" class="muted" aria-live="polite"></p>
-  </div>
-  <div class="settings-panel">
-    <h2>PROGRESS</h2>
-    <p class="muted">Progress and purchases are stored locally in your browser. They are not synced between devices.</p>
-    <button id="resetProgress">RESET ALL PROGRESS</button>
-  </div>
+ <div class="hero"><h1>SETTINGS</h1><p>Customize your controls and gameplay.</p></div>
+ <div class="panel">
+  <h2>KEYBINDS</h2>
+  <p class="muted">Click a key button, then press the key you want to use.</p>
+  <div id="keyList"></div>
+  <button id="resetKeys">RESTORE DEFAULT KEYS</button>
+ </div>
+ <div class="panel" style="margin-top:15px">
+  <h2>GAME SETTINGS</h2>
+  <div class="setting"><label for="sensitivity">Camera sensitivity</label><input id="sensitivity" type="range" min="1" max="10" value="5"></div>
+  <div class="setting"><label for="quality">Graphics quality</label><select id="quality"><option>Performance</option><option selected>Balanced</option><option>High</option></select></div>
+  <button id="saveSettings">SAVE SETTINGS</button><p id="saved" class="muted"></p>
+  <hr style="border-color:#ffffff20;margin:20px 0">
+  <button id="resetProgress">RESET SAVED PROGRESS</button>
+ </div>
 </section>
 </main>
-<footer>FORTNIGHT · ORIGINAL BROWSER GAME PROTOTYPE · GITHUB PAGES</footer>
+<footer>FORTNIGHT · 3D BROWSER PROTOTYPE · GITHUB PAGES</footer>
 
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 <script>
 "use strict";
-const $ = id => document.getElementById(id);
-const defaults = {up:"w",down:"s",left:"a",right:"d",build:"b",switchBuild:"q"};
-const actionNames = {up:"Move forward",down:"Move backward",left:"Move left",
-right:"Move right",build:"Toggle building",switchBuild:"Switch build type"};
-
-function read(key,fallback){
-  try { const v=localStorage.getItem("fn_"+key); return v===null?fallback:JSON.parse(v); }
-  catch(e){ return fallback; }
-}
-function save(key,value){
-  try { localStorage.setItem("fn_"+key,JSON.stringify(value)); } catch(e){}
-}
-let data=read("data",{coins:0,xp:0,shards:0,materials:10,structures:0,owned:["Trailblazer"],outfit:"Trailblazer"});
-data.coins=Number(data.coins)||0;
-data.xp=Number(data.xp)||0;
-data.shards=Number(data.shards)||0;
-data.materials=Number(data.materials)||10;
-data.structures=Number(data.structures)||0;
+const $=id=>document.getElementById(id);
+const defaults={forward:"w",back:"s",left:"a",right:"d",build:"b",cycle:"q"};
+const labels={forward:"Move forward",back:"Move backward",left:"Move left",right:"Move right",build:"Toggle building",cycle:"Change building piece"};
+function load(k,f){try{let x=localStorage.getItem("fn3_"+k);return x===null?f:JSON.parse(x)}catch(e){return f}}
+function save(k,v){try{localStorage.setItem("fn3_"+k,JSON.stringify(v))}catch(e){}}
+let data=load("data",{bucks:0,xp:0,shards:0,materials:20,outfit:"Trailblazer",owned:["Trailblazer"],items:[]});
 data.owned=Array.isArray(data.owned)?data.owned:["Trailblazer"];
-if(!data.owned.includes("Trailblazer"))data.owned.push("Trailblazer");
-let keys={...defaults,...read("keys",{})};
-let settings=read("settings",{sensitivity:5,graphics:"Balanced",sound:true});
-let claimed=read("claimed",[]);
-let buildMode=false,buildIndex=0,gameRunning=false;
-const buildTypes=["WALL","FLOOR","RAMP","ROOF"];
+data.items=Array.isArray(data.items)?data.items:[];
+let keys={...defaults,...load("keys",{})};
+let settings={sensitivity:5,quality:"Balanced",...load("settings",{})};
+let claimed=load("claimed",[]);
+let scene,camera,renderer,player,playerBody,clock;
+let terrain,worldReady=false,buildMode=false,pieceIndex=0;
+let shards=[],buildObjects=[],obstacles=[];
+let yaw=0,pitch=.25,keysDown=new Set(),entered=false;
+const pieceNames=["WALL","FLOOR","RAMP","ROOF"];
 const outfits=[
- {name:"Trailblazer",icon:"🧑‍🚀",cost:0,desc:"Your first island explorer."},
- {name:"Sky Runner",icon:"🏃",cost:80,desc:"A fast-looking original outfit."},
- {name:"Neon Scout",icon:"🧑‍🎤",cost:140,desc:"Bright colors for night missions."},
- {name:"Frost Wanderer",icon:"🥶",cost:200,desc:"An icy expedition look."}
+ {name:"Trailblazer",icon:"🧑‍🚀",cost:0,desc:"Your original island explorer."},
+ {name:"Sky Runner",icon:"🏃",cost:80,desc:"Ready to race across the island."},
+ {name:"Neon Scout",icon:"🦸",cost:140,desc:"A bright futuristic outfit."},
+ {name:"Frost Wanderer",icon:"🥶",cost:200,desc:"An icy explorer style."}
 ];
-const items=[
- {name:"Star Pick",icon:"⭐",cost:40,desc:"A sparkling cosmetic tool."},
- {name:"Cloud Glider",icon:"☁️",cost:80,desc:"A fluffy glider style."},
- {name:"Pixel Dance",icon:"🕺",cost:60,desc:"A fun victory emote."},
- {name:"Aurora Trail",icon:"🌌",cost:100,desc:"A colorful trail effect."}
+const cosmetics=[
+ {name:"Star Pick",icon:"⭐",cost:40,desc:"A starry tool cosmetic."},
+ {name:"Cloud Glider",icon:"☁️",cost:80,desc:"A fluffy glider cosmetic."},
+ {name:"Pixel Dance",icon:"🕺",cost:60,desc:"A victory dance cosmetic."},
+ {name:"Aurora Trail",icon:"🌌",cost:100,desc:"A colorful trail cosmetic."}
 ];
-function persist(){save("data",data);save("claimed",claimed);updateStats();}
-function updateStats(){
- $("coinCount").textContent=data.coins;
- $("shardCount").textContent=data.shards;
- $("xpCount").textContent=data.xp;
- $("matCount").textContent=data.materials;
- $("structureCount").textContent=data.structures;
- $("passXP").textContent=data.xp;
+const rewards=[
+ {xp:0,icon:"🪙",name:"Welcome Bonus",desc:"A little V-Bucks starter reward."},
+ {xp:100,icon:"✨",name:"Spark Badge",desc:"A badge for your profile."},
+ {xp:200,icon:"🌠",name:"Star Trail",desc:"A cosmic cosmetic reward."},
+ {xp:300,icon:"🪂",name:"Cloud Drop",desc:"A new glider style."},
+ {xp:500,icon:"🏆",name:"Island Champion",desc:"A milestone reward."}
+];
+function persist(){save("data",data);save("claimed",claimed);updateUI()}
+function updateUI(){
+ $("bucks").textContent=data.bucks;$("bucks2").textContent=data.bucks;
+ $("xp").textContent=data.xp;$("shards").textContent=data.shards;
+ $("materials").textContent=data.materials;$("builds").textContent=buildObjects.length;
+ $("level").textContent=Math.floor(data.xp/100)+1;
  $("passLevel").textContent=Math.floor(data.xp/100)+1;
- $("zoneStatus").textContent=storm<0.05?"CLOSE":storm<0.16?"MOVING":"STABLE";
+ $("passXP").textContent=data.xp;$("equipped").textContent=data.outfit;
 }
 function showPage(id){
  document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===id));
  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
- if(id==="play")draw();
+ if(id==="play"&&renderer)resize();
 }
 document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
-function cardHTML(icon,name,desc,extra,button,label){
- return `<div class="card"><div class="art">${icon}</div><h3>${name}</h3>
- <p class="muted">${desc}</p><p><b>${extra}</b></p>
- <button data-action="${button}" data-name="${name}">${label}</button></div>`;
+function makeCard(icon,name,desc,price,label,fn){
+ const c=document.createElement("div");c.className="card";
+ const art=document.createElement("div");art.className="art";art.textContent=icon;c.appendChild(art);
+ const h=document.createElement("h3");h.textContent=name;c.appendChild(h);
+ const p=document.createElement("p");p.className="muted";p.textContent=desc;c.appendChild(p);
+ const cost=document.createElement("p");cost.textContent=price;c.appendChild(cost);
+ const b=document.createElement("button");b.textContent=label;b.onclick=fn;c.appendChild(b);
+ return c;
 }
 function renderLocker(){
- $("lockerCards").innerHTML=outfits.map(o=>cardHTML(o.icon,o.name,o.desc,
- data.outfit===o.name?"EQUIPPED":o.cost+" V-Bucks","outfit",data.owned.includes(o.name)?"EQUIP":"BUY")).join("");
- $("lockerCards").querySelectorAll("button").forEach(b=>b.onclick=()=>outfitAction(b.dataset.name));
-}
-function outfitAction(name){
- const o=outfits.find(x=>x.name===name);if(!o)return;
- if(data.owned.includes(name)){data.outfit=name;persist();renderLocker();return;}
- if(data.coins<o.cost){alert("Not enough coins yet. Collect more shards in Play!");return;}
- data.coins-=o.cost;data.owned.push(name);data.outfit=name;persist();renderLocker();
+ const root=$("lockerGrid");root.replaceChildren();
+ outfits.forEach(o=>{
+ const own=data.owned.includes(o.name);
+ root.appendChild(makeCard(o.icon,o.name,o.desc,own?(data.outfit===o.name?"EQUIPPED":"OWNED"):o.cost+" V-Bucks",
+ own?(data.outfit===o.name?"EQUIPPED":"EQUIP"):"BUY",()=>{
+ if(own){data.outfit=o.name;persist();renderAll();return}
+ if(data.bucks<o.cost){alert("Not enough V-Bucks. Collect more shards on the island!");return}
+ data.bucks-=o.cost;data.owned.push(o.name);data.outfit=o.name;persist();renderAll();
+ }));
+ });
 }
 function renderShop(){
- $("shopCards").innerHTML=items.map(o=>cardHTML(o.icon,o.name,o.desc,o.cost+" V-Bucks","item","PURCHASE")).join("");
- $("shopCards").querySelectorAll("button").forEach(b=>b.onclick=()=>{
- const o=items.find(x=>x.name===b.dataset.name);if(!o)return;
- const owned=read("itemsOwned",[]);
- if(owned.includes(o.name)){alert("You already own this item.");return;}
- if(data.coins<o.cost){alert("Not enough coins yet. Collect more shards in Play!");return;}
- data.coins-=o.cost;owned.push(o.name);save("itemsOwned",owned);persist();renderShop();
- });
- const owned=read("itemsOwned",[]);
- $("shopCards").querySelectorAll(".card").forEach(c=>{
- const name=c.querySelector("h3").textContent;
- if(owned.includes(name))c.querySelector("button").textContent="OWNED";
+ const root=$("shopGrid");root.replaceChildren();
+ cosmetics.forEach(o=>{
+ const own=data.items.includes(o.name);
+ root.appendChild(makeCard(o.icon,o.name,o.desc,own?"OWNED":o.cost+" V-Bucks",own?"OWNED":"PURCHASE",()=>{
+ if(own)return;
+ if(data.bucks<o.cost){alert("Not enough V-Bucks. Collect more shards on the island!");return}
+ data.bucks-=o.cost;data.items.push(o.name);persist();renderAll();
+ }));
  });
 }
-const rewards=[
- {xp:0,icon:"🪙",name:"Starter Coins",desc:"A warm welcome.",reward:"10 coins"},
- {xp:100,icon:"✨",name:"Spark Badge",desc:"Your first milestone.",reward:"Badge"},
- {xp:200,icon:"🌠",name:"Star Trail",desc:"A glowing trail style.",reward:"Cosmetic"},
- {xp:300,icon:"🪂",name:"Cloud Drop",desc:"A new glider look.",reward:"Cosmetic"},
- {xp:400,icon:"🏆",name:"Island Champion",desc:"Show off your progress.",reward:"Title"}
-];
 function renderPass(){
- $("passCards").innerHTML=rewards.map((r,i)=>{
- const done=data.xp>=r.xp,was=claimed.includes(i);
- return `<div class="card"><div class="art">${r.icon}</div><h3>${r.name}</h3>
- <p class="muted">${r.desc}</p><p>Unlock at ${r.xp} XP</p>
- <button data-reward="${i}" ${(!done||was)?"disabled":""}>${was?"CLAIMED":done?"CLAIM REWARD":"LOCKED"}</button></div>`;
- }).join("");
- $("passCards").querySelectorAll("button").forEach(b=>b.onclick=()=>{
- const i=Number(b.dataset.reward),r=rewards[i];
- if(data.xp<r.xp||claimed.includes(i))return;
- claimed.push(i);if(i===0)data.coins+=10;
+ const root=$("passGrid");root.replaceChildren();
+ rewards.forEach((r,i)=>{
+ const unlocked=data.xp>=r.xp,done=claimed.includes(i);
+ root.appendChild(makeCard(r.icon,r.name,r.desc,"Unlock at "+r.xp+" XP",done?"CLAIMED":unlocked?"CLAIM REWARD":"LOCKED",()=>{
+ if(!unlocked||done)return;
+ claimed.push(i);if(i===0)data.bucks+=10;
  persist();renderPass();
+ }));
+ const b=root.lastChild.querySelector("button");b.disabled=!unlocked||done;
  });
 }
 function renderKeys(){
- $("keySettings").innerHTML=Object.keys(defaults).map(k=>
- `<div class="setting-row"><span>${actionNames[k]}</span>
- <button class="key" data-key="${k}">${keys[k].toUpperCase()}</button></div>`).join("");
- $("keySettings").querySelectorAll("button").forEach(b=>b.onclick=()=>{
- b.textContent="PRESS KEY…";
- const handler=e=>{
- e.preventDefault();const val=e.key.toLowerCase();
- if(["shift","control","alt","meta"].includes(val))return;
- if(Object.entries(keys).some(([k,v])=>k!==b.dataset.key&&v===val)){
- b.textContent="IN USE";window.removeEventListener("keydown",handler,true);return;
- }
- keys[b.dataset.key]=val;save("keys",keys);renderKeys();
- window.removeEventListener("keydown",handler,true);
+ const root=$("keyList");root.replaceChildren();
+ Object.keys(defaults).forEach(k=>{
+ const row=document.createElement("div");row.className="setting";
+ const name=document.createElement("span");name.textContent=labels[k];row.appendChild(name);
+ const b=document.createElement("button");b.className="key";b.textContent=keys[k].toUpperCase();
+ b.onclick=()=>{
+ b.textContent="PRESS KEY";
+ const fn=e=>{
+ e.preventDefault();const v=e.key.toLowerCase();
+ if(v.length!==1||Object.entries(keys).some(([other,val])=>other!==k&&val===v)){b.textContent="TRY AGAIN";return}
+ keys[k]=v;save("keys",keys);renderKeys();window.removeEventListener("keydown",fn,true);
  };
- window.addEventListener("keydown",handler,true);
+ window.addEventListener("keydown",fn,true);
+ };
+ row.appendChild(b);root.appendChild(row);
  });
 }
-$("resetKeys").onclick=()=>{keys={...defaults};save("keys",keys);renderKeys();};
+function renderAll(){renderLocker();renderShop();renderPass();renderKeys();updateUI()}
+$("resetKeys").onclick=()=>{keys={...defaults};save("keys",keys);renderKeys()};
 $("sensitivity").value=settings.sensitivity;
-$("graphics").value=settings.graphics;
-$("sound").checked=settings.sound;
+$("quality").value=settings.quality;
 $("saveSettings").onclick=()=>{
- settings={sensitivity:Number($("sensitivity").value),graphics:$("graphics").value,sound:$("sound").checked};
- save("settings",settings);$("settingsMessage").textContent="Settings saved on this browser.";
+ settings={sensitivity:Number($("sensitivity").value),quality:$("quality").value};
+ save("settings",settings);$("saved").textContent="Settings saved!";
 };
 $("resetProgress").onclick=()=>{
- if(!confirm("Reset your coins, XP, cosmetics and island progress?"))return;
- data={coins:0,xp:0,shards:0,materials:10,structures:0,owned:["Trailblazer"],outfit:"Trailblazer"};
- claimed=[];save("itemsOwned",[]);persist();renderAll();resetWorld();
+ if(!confirm("Reset your saved V-Bucks, XP, unlocks and progress?"))return;
+ data={bucks:0,xp:0,shards:0,materials:20,outfit:"Trailblazer",owned:["Trailblazer"],items:[]};
+ claimed=[];persist();renderAll();
 };
-function renderAll(){renderLocker();renderShop();renderPass();renderKeys();updateStats();}
-$("start").onclick=()=>{showPage("play");gameRunning=true;$("game").focus();};
-$("buildBtn").onclick=()=>{buildMode=!buildMode;$("buildBtn").textContent="BUILD: "+(buildMode?"ON":"OFF");};
-$("buildType").onclick=()=>{buildIndex=(buildIndex+1)%buildTypes.length;$("buildType").textContent="TYPE: "+buildTypes[buildIndex];};
-$("resetGame").onclick=()=>{resetWorld();showPage("play");};
+function message(t){$("message").textContent=t}
+function toggleBuild(){buildMode=!buildMode;$("buildToggle").textContent="BUILD: "+(buildMode?"ON":"OFF")+" (B)";message(buildMode?"Building mode: click the ground to place a piece.":"Exploration mode.");}
+function cyclePiece(){pieceIndex=(pieceIndex+1)%pieceNames.length;$("cycle").textContent="PIECE: "+pieceNames[pieceIndex]+" (Q)";message("Selected "+pieceNames[pieceIndex].toLowerCase()+".")}
+$("buildToggle").onclick=toggleBuild;
+$("cycle").onclick=cyclePiece;
+$("enter").onclick=()=>{entered=true;message("Island ready! WASD to move. Drag the mouse to look around.");showPage("play");};
+$("restart").onclick=()=>{
+ if(!worldReady)return;
+ shards.forEach(s=>scene.remove(s));shards=[];
+ buildObjects.forEach(s=>scene.remove(s));buildObjects=[];
+ player.position.set(0,1,0);data.materials=20;data.shards=0;data.xp=0;data.bucks=0;persist();
+ for(let i=0;i<18;i++)spawnShard();message("Island reset.");updateUI();
+};
+$("removeBuild").onclick=()=>{
+ const b=buildObjects.pop();if(b){scene.remove(b);data.materials+=1;persist();message("Removed your last build.");}
+};
 
-const canvas=$("game"),ctx=canvas.getContext("2d");
-let player={x:480,y:270},shards=[],structures=[],storm=0,worldTicks=0;
-function resetWorld(){
- player={x:480,y:270};shards=[];structures=[];storm=0;worldTicks=0;
- data.shards=0;data.materials=10;data.structures=0;persist();
+// Three.js world
+function init3D(){
+ if(!window.THREE){message("3D library failed to load. Check your internet connection and refresh.");return}
+ const T=window.THREE;
+ scene=new T.Scene();scene.background=new T.Color(0x8bd4f2);scene.fog=new T.Fog(0x8bd4f2,45,125);
+ camera=new T.PerspectiveCamera(65,1,.1,300);
+ renderer=new T.WebGLRenderer({antialias:true});
+ renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,settings.quality==="High"?1.7:1.15));
+ renderer.shadowMap.enabled=settings.quality!=="Performance";
+ renderer.shadowMap.type=T.PCFSoftShadowMap;
+ $("game").appendChild(renderer.domElement);
+ clock=new T.Clock();
+ scene.add(new T.HemisphereLight(0xc6edff,0x476343,2));
+ const sun=new T.DirectionalLight(0xfff2d1,2.2);sun.position.set(-25,45,20);
+ sun.castShadow=renderer.shadowMap.enabled;sun.shadow.mapSize.set(1024,1024);scene.add(sun);
+ const water=new T.Mesh(new T.PlaneGeometry(300,300),new T.MeshStandardMaterial({color:0x258cb6,roughness:.7}));
+ water.rotation.x=-Math.PI/2;water.position.y=-1.2;scene.add(water);
+ terrain=new T.Mesh(new T.CylinderGeometry(48,52,3,64),new T.MeshStandardMaterial({color:0x64ba69,roughness:1}));
+ terrain.position.y=-1.5;terrain.receiveShadow=true;scene.add(terrain);
+ // Island surface
+ const ground=new T.Mesh(new T.CircleGeometry(48,64),new T.MeshStandardMaterial({color:0x80d16f,roughness:1}));
+ ground.rotation.x=-Math.PI/2;ground.position.y=.02;ground.receiveShadow=true;scene.add(ground);
+ // Paths across the island
+ for(let i=0;i<4;i++){
+ const path=new T.Mesh(new T.BoxGeometry(22,.08,3.5),new T.MeshStandardMaterial({color:0xcab98c}));
+ path.position.set((i-1.5)*10,.07,(i%2===0)?-8:8);path.rotation.y=.4;scene.add(path);
+ }
+ // Trees, rocks and simple buildings
+ for(let i=0;i<75;i++){
+ const a=Math.random()*Math.PI*2,r=12+Math.random()*32,x=Math.cos(a)*r,z=Math.sin(a)*r;
+ if(Math.hypot(x,z)<8)continue;
+ const tree=new T.Group();
+ const trunk=new T.Mesh(new T.CylinderGeometry(.22,.32,2,7),new T.MeshStandardMaterial({color:0x785035}));
+ trunk.position.y=1;trunk.castShadow=true;tree.add(trunk);
+ const crown=new T.Mesh(new T.ConeGeometry(1.35,3.1,7),new T.MeshStandardMaterial({color:[0x267b49,0x318c4b,0x3c9851][i%3]}));
+ crown.position.y=3; crown.castShadow=true;tree.add(crown);tree.position.set(x,0,z);scene.add(tree);
+ obstacles.push({x,z,r:1});
+ }
+ for(let i=0;i<5;i++){
+ const building=new T.Group();
+ const base=new T.Mesh(new T.BoxGeometry(4,3,4),new T.MeshStandardMaterial({color:[0x64849d,0xc3a675,0x8e81bd][i%3]}));
+ base.position.y=1.5;base.castShadow=true;base.receiveShadow=true;building.add(base);
+ const roof=new T.Mesh(new T.ConeGeometry(3.2,1.5,4),new T.MeshStandardMaterial({color:0x394e6a}));
+ roof.position.y=3.7;roof.rotation.y=Math.PI/4;building.add(roof);
+ const x=Math.cos(i*1.25)*24,z=Math.sin(i*1.25)*24;
+ building.position.set(x,0,z);scene.add(building);obstacles.push({x,z,r:3.2});
+ }
+ // Player model
+ player=new T.Group();
+ const body=new T.Mesh(new T.CapsuleGeometry(.48,.8,4,8),new T.MeshStandardMaterial({color:0x1889c4,roughness:.65}));
+ body.position.y=1.25;body.castShadow=true;player.add(body);
+ const head=new T.Mesh(new T.SphereGeometry(.36,16,12),new T.MeshStandardMaterial({color:0xffd0a1}));
+ head.position.y=2.1;head.castShadow=true;player.add(head);
+ const visor=new T.Mesh(new T.BoxGeometry(.45,.14,.12),new T.MeshStandardMaterial({color:0x102b47,metalness:.4,roughness:.25}));
+ visor.position.set(0,2.16,.31);player.add(visor);
+ const legMat=new T.MeshStandardMaterial({color:0x172e52});
+ for(const x of [-.23,.23]){
+ const leg=new T.Mesh(new T.BoxGeometry(.22,.65,.27),legMat);leg.position.set(x,.43,0);leg.castShadow=true;player.add(leg);
+ }
+ scene.add(player);player.position.set(0,0,0);
  for(let i=0;i<18;i++)spawnShard();
- draw();
+ resize();worldReady=true;message("3D island loaded! Press ENTER THE ISLAND to begin.");
+ animate();
 }
 function spawnShard(){
- shards.push({x:45+Math.random()*870,y:45+Math.random()*450,phase:Math.random()*6});
+ if(!worldReady)return;
+ const T=THREE;
+ const a=Math.random()*Math.PI*2,r=6+Math.random()*36;
+ const gem=new T.Mesh(new T.OctahedronGeometry(.55),new T.MeshStandardMaterial({color:0x37eaff,emissive:0x0787c0,emissiveIntensity:1.3,metalness:.3,roughness:.25}));
+ gem.position.set(Math.cos(a)*r,.9,Math.sin(a)*r);gem.castShadow=true;scene.add(gem);
+ shards.push(gem);
 }
-function circle(x,y,r,color){
- ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();
-}
-function draw(){
- ctx.clearRect(0,0,960,540);
- ctx.fillStyle="#79c9eb";ctx.fillRect(0,0,960,540);
- // Island and water
- ctx.fillStyle="#26799b";ctx.fillRect(0,0,960,540);
- ctx.fillStyle="#9adf87";ctx.beginPath();ctx.ellipse(480,270,435,235,0,0,Math.PI*2);ctx.fill();
- ctx.fillStyle="#65b96e";ctx.beginPath();ctx.ellipse(480,270,370,195,0,0,Math.PI*2);ctx.fill();
- // Paths
- ctx.strokeStyle="#d5c995";ctx.lineWidth=28;ctx.lineCap="round";ctx.beginPath();
- ctx.moveTo(160,360);ctx.quadraticCurveTo(370,190,510,300);ctx.quadraticCurveTo(690,410,810,180);ctx.stroke();
- // Trees and rocks
- for(let i=0;i<42;i++){
- const x=(i*173+55)%850+55,y=(i*97+35)%420+60;
- if(Math.hypot(x-480,y-270)<70)continue;
- ctx.fillStyle="#6b5034";ctx.fillRect(x-4,y,8,14);
- circle(x,y,12,"#216b46");circle(x-4,y-4,8,"#328d52");
- }
- for(let i=0;i<7;i++){
- const x=120+i*115,y=115+(i%3)*120;
- ctx.fillStyle="#b5c2c4";ctx.beginPath();ctx.ellipse(x,y,16,11,-.3,0,Math.PI*2);ctx.fill();
- }
- // Storm boundary
- ctx.strokeStyle="#b66bff";ctx.lineWidth=5;ctx.setLineDash([12,8]);
- ctx.beginPath();ctx.ellipse(480,270,435-storm*250,235-storm*120,0,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
- // Build pieces
- structures.forEach(s=>{
- ctx.save();ctx.translate(s.x,s.y);
- if(s.type==="WALL"){
- ctx.fillStyle="#4eabc7";ctx.fillRect(-18,-18,36,36);
- ctx.strokeStyle="#b8f0ff";ctx.lineWidth=3;ctx.strokeRect(-18,-18,36,36);
- ctx.strokeStyle="#24718c";ctx.beginPath();ctx.moveTo(-6,-18);ctx.lineTo(-6,18);ctx.moveTo(6,-18);ctx.lineTo(6,18);ctx.stroke();
- }else if(s.type==="FLOOR"){
- ctx.fillStyle="#a5d6e6";ctx.fillRect(-20,-15,40,30);ctx.strokeStyle="#438ca8";ctx.strokeRect(-20,-15,40,30);
- }else if(s.type==="RAMP"){
- ctx.fillStyle="#8bd5ed";ctx.beginPath();ctx.moveTo(-20,16);ctx.lineTo(20,16);ctx.lineTo(20,-16);ctx.closePath();ctx.fill();
- ctx.strokeStyle="#438ca8";ctx.stroke();
+function placeBuild(){
+ if(!buildMode||!worldReady)return;
+ if(data.materials<=0){message("Out of materials! Collect shards.");return}
+ // Place a piece a short distance in front of the player.
+ const T=THREE,dir=new T.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));
+ const pos=player.position.clone().addScaledVector(dir,4);
+ pos.x=Math.round(pos.x/2)*2;pos.z=Math.round(pos.z/2)*2;
+ if(Math.hypot(pos.x,pos.z)>43){message("Build closer to the center of the island.");return}
+ let mesh;
+ const mat=new T.MeshStandardMaterial({color:0x55bfe3,roughness:.65});
+ if(pieceIndex===0){
+ mesh=new T.Mesh(new T.BoxGeometry(3.2,2.8,.25),mat);mesh.position.set(pos.x,1.4,pos.z);
+ }else if(pieceIndex===1){
+ mesh=new T.Mesh(new T.BoxGeometry(3.2,.2,3.2),mat);mesh.position.set(pos.x,.2,pos.z);
+ }else if(pieceIndex===2){
+ mesh=new T.Mesh(new T.BoxGeometry(3.2,.25,3.2),mat);mesh.position.set(pos.x,.8,pos.z);mesh.rotation.x=-.32;
  }else{
- ctx.fillStyle="#c0a8f0";ctx.beginPath();ctx.moveTo(-20,0);ctx.lineTo(0,-18);ctx.lineTo(20,0);ctx.lineTo(0,18);ctx.closePath();ctx.fill();
- ctx.strokeStyle="#8064b8";ctx.stroke();
+ const geo=new T.ConeGeometry(2.25,.8,4);mesh=new T.Mesh(geo,mat);mesh.position.set(pos.x,2.8,pos.z);mesh.rotation.y=Math.PI/4;
  }
- ctx.restore();
- });
- // Shards
- shards.forEach(s=>{
- s.phase+=.06;ctx.save();ctx.translate(s.x,s.y+Math.sin(s.phase)*3);ctx.rotate(Math.PI/4);
- ctx.fillStyle="#e8ffff";ctx.fillRect(-7,-7,14,14);
- ctx.fillStyle="#39e5ff";ctx.fillRect(-5,-5,10,10);ctx.restore();
- });
- // Player
- circle(player.x,player.y+5,15,"#23506b");
- circle(player.x,player.y,12,"#ffdc89");
- ctx.fillStyle="#eafaff";ctx.fillRect(player.x-8,player.y-7,16,6);
- ctx.fillStyle="#217ba9";ctx.fillRect(player.x-9,player.y+7,18,12);
- // Labels
- ctx.fillStyle="#09233a";ctx.font="bold 16px Arial";ctx.fillText("FORTNIGHT ISLAND",18,27);
- ctx.fillStyle="white";ctx.font="bold 14px Arial";ctx.fillText(buildMode?"BUILD MODE: "+buildTypes[buildIndex]:"EXPLORE MODE",18,50);
+ mesh.castShadow=true;mesh.receiveShadow=true;scene.add(mesh);buildObjects.push(mesh);
+ data.materials--;persist();message(pieceNames[pieceIndex]+" placed!");
 }
-const pressed=new Set();
-function keyAction(action){
- return keys[action].toLowerCase();
-}
-window.addEventListener("keydown",e=>{
- if(["arrowup","arrowdown","arrowleft","arrowright"," "].includes(e.key.toLowerCase()))e.preventDefault();
- if(document.querySelector(".page.active")?.id!=="play")return;
- const k=e.key.toLowerCase();pressed.add(k);
- if(k===keyAction("build")){buildMode=!buildMode;$("buildBtn").textContent="BUILD: "+(buildMode?"ON":"OFF");}
- if(k===keyAction("switchBuild")){buildIndex=(buildIndex+1)%buildTypes.length;$("buildType").textContent="TYPE: "+buildTypes[buildIndex];}
-},{passive:false});
-window.addEventListener("keyup",e=>pressed.delete(e.key.toLowerCase()));
-function placeStructure(x,y){
- if(!buildMode)return;
- if(data.materials<1){alert("Gather shards to earn more building materials!");return;}
- if(structures.some(s=>Math.hypot(s.x-x,s.y-y)<25))return;
- structures.push({x,y,type:buildTypes[buildIndex]});
- data.materials--;data.structures++;persist();draw();
-}
-canvas.addEventListener("pointerdown",e=>{
- const rect=canvas.getBoundingClientRect();
- const x=(e.clientX-rect.left)*canvas.width/rect.width;
- const y=(e.clientY-rect.top)*canvas.height/rect.height;
- if(buildMode){placeStructure(Math.round(x/40)*40,Math.round(y/40)*40);}
+$("game").addEventListener("pointerdown",e=>{
+ if(!worldReady||!entered)return;
+ if(buildMode){placeBuild();return}
+ if(e.pointerType==="touch")return;
 });
-function gameLoop(){
- if(document.querySelector(".page.active")?.id==="play"){
- let speed=2.5*(Number(settings.sensitivity)||5)/5;
- let dx=0,dy=0;
- if(pressed.has(keyAction("up"))||pressed.has("arrowup"))dy-=speed;
- if(pressed.has(keyAction("down"))||pressed.has("arrowdown"))dy+=speed;
- if(pressed.has(keyAction("left"))||pressed.has("arrowleft"))dx-=speed;
- if(pressed.has(keyAction("right"))||pressed.has("arrowright"))dx+=speed;
- if(dx||dy){
- const nextX=Math.max(20,Math.min(940,player.x+dx));
- const nextY=Math.max(20,Math.min(520,player.y+dy));
- if(!structures.some(s=>Math.hypot(s.x-nextX,s.y-nextY)<22)){player.x=nextX;player.y=nextY;}
+let dragging=false,lastX=0,lastY=0;
+$("game").addEventListener("pointerdown",e=>{
+ if(!worldReady||!entered||buildMode)return;
+ dragging=true;lastX=e.clientX;lastY=e.clientY;
+ try{$("game").setPointerCapture(e.pointerId)}catch(err){}
+});
+$("game").addEventListener("pointermove",e=>{
+ if(!dragging||!entered||!worldReady)return;
+ const scale=(Number(settings.sensitivity)||5)*.0018;
+ yaw-=(e.clientX-lastX)*scale;pitch=Math.max(-.1,Math.min(.75,pitch+(e.clientY-lastY)*scale));
+ lastX=e.clientX;lastY=e.clientY;
+});
+$("game").addEventListener("pointerup",()=>dragging=false);
+$("game").addEventListener("pointercancel",()=>dragging=false);
+window.addEventListener("keydown",e=>{
+ const tag=e.target.tagName;
+ if(tag==="INPUT"||tag==="SELECT"||tag==="TEXTAREA")return;
+ const k=e.key.toLowerCase();keysDown.add(k);
+ if(["arrowup","arrowdown","arrowleft","arrowright"," "].includes(k))e.preventDefault();
+ if(k===keys.build&&!e.repeat)toggleBuild();
+ if(k===keys.cycle&&!e.repeat)cyclePiece();
+});
+window.addEventListener("keyup",e=>keysDown.delete(e.key.toLowerCase()));
+window.addEventListener("blur",()=>keysDown.clear());
+function resize(){
+ if(!renderer||!camera)return;
+ const w=Math.max(1,$("game").clientWidth),h=Math.max(1,$("game").clientHeight);
+ renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
+}
+window.addEventListener("resize",resize);
+function animate(){
+ requestAnimationFrame(animate);
+ if(!worldReady)return;
+ const dt=Math.min(clock.getDelta(),.04);
+ if(entered){
+ let forward=0,side=0;
+ if(keysDown.has(keys.forward)||keysDown.has("arrowup"))forward+=1;
+ if(keysDown.has(keys.back)||keysDown.has("arrowdown"))forward-=1;
+ if(keysDown.has(keys.left)||keysDown.has("arrowleft"))side-=1;
+ if(keysDown.has(keys.right)||keysDown.has("arrowright"))side+=1;
+ if(forward||side){
+ const speed=9*dt,dir=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));
+ const right=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));
+ const move=dir.multiplyScalar(forward).add(right.multiplyScalar(side)).normalize().multiplyScalar(speed);
+ const nx=player.position.x+move.x,nz=player.position.z+move.z;
+ if(Math.hypot(nx,nz)<45&&!obstacles.some(o=>Math.hypot(nx-o.x,nz-o.z)<o.r+.7)){
+ player.position.x=nx;player.position.z=nz;
+ }
+ if(forward)player.rotation.y=yaw;
  }
  for(let i=shards.length-1;i>=0;i--){
- if(Math.hypot(shards[i].x-player.x,shards[i].y-player.y)<22){
- shards.splice(i,1);data.shards++;data.xp+=10;data.materials+=2;
- if(data.shards%5===0){data.coins+=10;data.xp+=50;}
+ const s=shards[i];s.rotation.y+=dt*1.8;s.position.y=.9+Math.sin(performance.now()*.002+i)*.2;
+ if(player.position.distanceTo(s.position)<1.65){
+ scene.remove(s);shards.splice(i,1);data.shards++;data.xp+=10;data.materials+=2;
+ if(data.shards%5===0){data.bucks+=10;data.xp+=50;message("Shard streak! +10 V-Bucks and bonus XP!")}
+ else message("+10 XP and +2 materials!");
  persist();renderPass();spawnShard();
  }
  }
- worldTicks++;
- if(worldTicks%500===0)storm=Math.min(.7,storm+.04);
- draw();
  }
- requestAnimationFrame(gameLoop);
+ const target=new THREE.Vector3(player.position.x+Math.sin(yaw)*(-8),player.position.y+4+pitch*4,player.position.z+Math.cos(yaw)*8);
+ camera.position.lerp(target,1-Math.exp(-5*dt));
+ camera.lookAt(player.position.x,player.position.y+1.3,player.position.z);
+ renderer.render(scene,camera);
 }
-renderAll();resetWorld();gameLoop();
+function renderPass(){const old=$("passGrid");if(old)buildPass()}
+function buildPass(){
+ const root=$("passGrid");root.replaceChildren();
+ rewards.forEach((r,i)=>{
+ const unlocked=data.xp>=r.xp,done=claimed.includes(i);
+ root.appendChild(makeCard(r.icon,r.name,r.desc,"Unlock at "+r.xp+" XP",done?"CLAIMED":unlocked?"CLAIM REWARD":"LOCKED",()=>{
+ if(!unlocked||done)return;claimed.push(i);if(i===0)data.bucks+=10;persist();buildPass();
+ }));
+ root.lastChild.querySelector("button").disabled=!unlocked||done;
+ });
+}
+function makeCard(icon,name,desc,price,label,fn){
+ const c=document.createElement("div");c.className="card";
+ const a=document.createElement("div");a.className="art";a.textContent=icon;c.appendChild(a);
+ const h=document.createElement("h3");h.textContent=name;c.appendChild(h);
+ const p=document.createElement("p");p.className="muted";p.textContent=desc;c.appendChild(p);
+ const pr=document.createElement("p");pr.textContent=price;c.appendChild(pr);
+ const b=document.createElement("button");b.textContent=label;b.onclick=fn;c.appendChild(b);return c;
+}
+const originalRenderPass=renderPass;
+renderAll();
+if(window.THREE){init3D()}else{message("Three.js did not load. Check your internet connection and refresh.")}
 </script>
 </body>
 </html>
